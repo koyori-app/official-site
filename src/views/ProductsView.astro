@@ -3,7 +3,7 @@ import type { Locale } from '../i18n/ui';
 import { t } from '../i18n/utils';
 import { products } from '../data/products';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ProductCard from '../components/ProductCard.astro';
+import ProductRow from '../components/ProductRow.astro';
 
 interface Props {
   lang: Locale;
@@ -13,15 +13,20 @@ const tr = t(lang);
 ---
 
 <BaseLayout lang={lang} title={tr('products.title')} description={tr('products.pageDescription')}>
-  <section class="container-site py-16 sm:py-20">
-    <h1 class="text-4xl font-bold tracking-tight text-ink sm:text-5xl">{tr('products.title')}</h1>
-    <p class="mt-4 max-w-2xl text-lg text-ink-secondary">{tr('products.lead')}</p>
-    <ul class="mt-12 grid gap-6 sm:grid-cols-2">
-      {products.map((product) => (
+  <section class="container-site pt-20 pb-12 sm:pt-28">
+    <p class="label-mono">Products</p>
+    <h1
+      class:list={['mt-4 text-5xl text-fg sm:text-7xl', lang === 'ja' ? 'display-ja' : 'display']}
+    >
+      {tr('products.title')}
+    </h1>
+    <p class="mt-6 max-w-xl text-lg text-fg-2">{tr('products.lead')}</p>
+    <ol class="mt-16">
+      {products.map((product, i) => (
         <li>
-          <ProductCard product={product} lang={lang} headingLevel={2} />
+          <ProductRow product={product} lang={lang} index={i + 1} headingLevel={2} />
         </li>
       ))}
-    </ul>
+    </ol>
   </section>
 </BaseLayout>

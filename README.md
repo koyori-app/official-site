@@ -35,7 +35,8 @@ src/
   data/        products.ts にプロダクトの情報（名前・説明・リンク・ライセンス）
   content/     news/<lang>/<slug>.md にお知らせ
   layouts/     BaseLayout.astro（head のメタ情報、hreflang、OGP、ヘッダー・フッター）
-  components/  Astro コンポーネントと react/ の React islands
+  components/  Astro コンポーネントと react/ の React islands（モバイルナビ、WebGL のヒーロー）
+               ProductGlyph.astro にプロダクトごとの線画アイコン
   views/       各ページの本体。言語を props で受け取る
   pages/       ルーティング。日本語は直下、英語は en/ 配下で同じ構成。中身は views を呼ぶだけ
   styles/      global.css（Tailwind とデザイントークン、ボタン、お知らせ本文の見た目）
@@ -70,7 +71,11 @@ translationKey: slug # 日英で同じ値にすると記事ページで相互リ
 
 ### OG 画像
 
-`public/og.png`（1200×630）は手で差し替えます。文言を変えるときは同じサイズで作り直してください。
+`public/og.png`（1200×630）はトップのヒーローを 1200×694 のビューポートで開き、ヘッダー分の 64px を除いて撮ったものです。ヒーローの文言や見た目を変えたら撮り直してください。
+
+### WebGL について
+
+ヒーローの帯は `client:idle` で読み込む React island の中で three.js を動的 import しています。three.js の chunk は gzip で約 180 KB あり、トップ以外のページでは読み込みません。`prefers-reduced-motion` のときは 1 フレームだけ描いて止め、画面外ではループを止めます。WebGL が使えない環境では背景のグラデーションだけになります。
 
 ## デプロイと独自ドメイン
 

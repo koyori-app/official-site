@@ -4,6 +4,7 @@ import { localePath, t } from '../i18n/utils';
 import { products, type Product } from '../data/products';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProductCard from '../components/ProductCard.astro';
+import ProductGlyph from '../components/ProductGlyph.astro';
 import StatusBadge from '../components/StatusBadge.astro';
 import ExternalIcon from '../components/ExternalIcon.astro';
 
@@ -14,12 +15,11 @@ interface Props {
 const { lang, product } = Astro.props;
 const tr = t(lang);
 const others = products.filter((p) => p.slug !== product.slug);
-const tone =
-  product.tone === 'sage'
-    ? 'from-accent-soft/80 via-surface to-surface'
-    : 'from-accent-subtle via-surface to-surface';
+const index = products.findIndex((p) => p.slug === product.slug) + 1;
+const tone = product.tone === 'sage' ? 'text-sage' : 'text-lav';
+const glowColor = product.tone === 'sage' ? 'rgba(159,194,169,0.28)' : 'rgba(196,181,223,0.3)';
 
-/** `code` を <code> にする（features と description の軽い整形） */
+/** `code` を <code> にする */
 function inlineCode(text: string): string {
   return text
     .replace(/&/g, '&amp;')
@@ -27,86 +27,103 @@ function inlineCode(text: string): string {
     .replace(/>/g, '&gt;')
     .replace(
       /`([^`]+)`/g,
-      '<code class="rounded bg-accent-subtle px-1 py-0.5 text-[0.9em]">$1</code>',
+      '<code class="rounded bg-bg-3 px-1.5 py-0.5 font-mono text-[0.85em] text-lav-2">$1</code>',
     );
 }
 ---
 
 <BaseLayout lang={lang} title={product.name} description={product.tagline[lang]}>
-  <section class:list={['bg-linear-to-b', tone]}>
-    <div class="container-site py-16 sm:py-20">
-      <nav aria-label="Breadcrumb" class="text-sm text-ink-muted">
-        <ol class="flex flex-wrap items-center gap-2">
-          <li>
-            <a href={localePath(lang, '/products/')} class="hover:text-ink">
-              {tr('products.title')}
-            </a>
-          </li>
-          <li aria-hidden="true">/</li>
-          <li aria-current="page" class="text-ink-secondary">
-            {product.name}
-          </li>
-        </ol>
-      </nav>
-      <div class="mt-6 flex flex-wrap items-center gap-3">
-        <h1 class="text-4xl font-bold tracking-tight text-ink sm:text-5xl">{product.name}</h1>
-        <StatusBadge status={product.status} lang={lang} />
-      </div>
-      <p class="mt-4 max-w-3xl text-xl text-ink-secondary sm:text-2xl">{product.tagline[lang]}</p>
-      <div class="mt-8 flex flex-wrap gap-3">
-        <a href={product.repo} rel="noopener" class="btn btn-primary">
-          {tr('product.repo')}
-          <ExternalIcon />
-        </a>
-        {product.links.map((link) => (
-          <a href={link.href} rel="noopener" class="btn btn-ghost">
-            {link.label[lang]}
+  <section class="relative isolate overflow-hidden">
+    <div
+      class="pointer-events-none absolute inset-0 -z-10"
+      style={`background: radial-gradient(45% 60% at 80% 40%, ${glowColor}, transparent 70%);`}
+      aria-hidden="true"
+    ></div>
+    <div class="container-site grid items-center gap-12 pt-20 pb-16 sm:pt-28 lg:grid-cols-[1fr_20rem]">
+      <div>
+        <nav aria-label="Breadcrumb" class="label-mono">
+          <ol class="flex flex-wrap items-center gap-3">
+            <li>
+              <a href={localePath(lang, '/products/')} class="transition-colors hover:text-fg">
+                {tr('products.title')}
+              </a>
+            </li>
+            <li aria-hidden="true" class="text-sage">
+              /
+            </li>
+            <li aria-current="page">{String(index).padStart(2, '0')}</li>
+          </ol>
+        </nav>
+        <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+          <h1 class="display text-5xl text-fg sm:text-7xl">{product.name}</h1>
+          <StatusBadge status={product.status} lang={lang} />
+        </div>
+        <p
+          class:list={[
+            'mt-6 max-w-2xl text-2xl text-fg-2 sm:text-3xl',
+            lang === 'ja' ? 'display-ja font-normal' : 'tracking-tight',
+          ]}
+        >
+          {product.tagline[lang]}
+        </p>
+        <div class="mt-10 flex flex-wrap gap-3">
+          <a href={product.repo} rel="noopener" class="btn btn-primary">
+            {tr('product.repo')}
             <ExternalIcon />
           </a>
-        ))}
+          {product.links.map((link) => (
+            <a href={link.href} rel="noopener" class="btn btn-ghost">
+              {link.label[lang]}
+              <ExternalIcon />
+            </a>
+          ))}
+        </div>
+      </div>
+      <div class="hidden justify-center lg:flex">
+        <ProductGlyph
+          slug={product.slug}
+          class:list={['h-64 w-64 drop-shadow-[0_0_40px_rgba(196,181,223,0.25)]', tone]}
+        />
       </div>
     </div>
   </section>
 
-  <section class="container-site grid gap-12 py-16 lg:grid-cols-[1fr_18rem]">
+  <section class="container-site grid gap-14 py-10 lg:grid-cols-[1fr_18rem] lg:gap-20">
     <div>
-      <p
-        class="max-w-prose text-lg text-ink-secondary"
-        set:html={inlineCode(product.description[lang])}
-      />
-      <h2 class="mt-12 text-2xl font-bold tracking-tight text-ink">{tr('product.features')}</h2>
-      <ul class="mt-5 grid gap-3">
-        {product.features[lang].map((feature) => (
-          <li class="flex items-start gap-3 rounded-xl border border-border bg-surface-raised px-4 py-3 text-ink-secondary">
-            <span class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sage" aria-hidden="true" />
+      <p class="max-w-prose text-lg text-fg-2" set:html={inlineCode(product.description[lang])} />
+      <h2 class="label-mono mt-16">{tr('product.features')}</h2>
+      <ol class="mt-4">
+        {product.features[lang].map((feature, i) => (
+          <li class="grid grid-cols-[2.5rem_1fr] gap-4 border-t border-line py-5 text-fg-2 last:border-b">
+            <span class="label-mono pt-1 text-sage">{String(i + 1).padStart(2, '0')}</span>
             <span set:html={inlineCode(feature)} />
           </li>
         ))}
-      </ul>
+      </ol>
     </div>
 
     <aside class="lg:sticky lg:top-24 lg:self-start">
-      <dl class="rounded-2xl border border-border bg-surface-raised p-6">
-        <dt class="text-sm font-semibold text-ink">{tr('product.stack')}</dt>
-        <dd class="mt-2">
+      <dl class="rounded-2xl border border-line bg-bg-2 p-6">
+        <dt class="label-mono">{tr('product.stack')}</dt>
+        <dd class="mt-3">
           <ul class="flex flex-wrap gap-1.5">
             {product.stack.map((item) => (
-              <li class="rounded-md bg-accent-subtle px-2 py-0.5 text-xs font-medium text-ink-secondary">
+              <li class="rounded-full border border-line px-2.5 py-0.5 font-mono text-xs text-fg-2">
                 {item}
               </li>
             ))}
           </ul>
         </dd>
-        <dt class="mt-6 text-sm font-semibold text-ink">{tr('product.license')}</dt>
-        <dd class="mt-1 text-sm text-ink-secondary">{product.license}</dd>
-        <dt class="mt-6 text-sm font-semibold text-ink">{tr('product.links')}</dt>
-        <dd class="mt-1">
-          <ul class="flex flex-col gap-1.5 text-sm">
+        <dt class="label-mono mt-7">{tr('product.license')}</dt>
+        <dd class="mt-2 font-mono text-sm text-fg">{product.license}</dd>
+        <dt class="label-mono mt-7">{tr('product.links')}</dt>
+        <dd class="mt-2">
+          <ul class="flex flex-col gap-2 text-sm">
             <li>
               <a
                 href={product.repo}
                 rel="noopener"
-                class="inline-flex items-center gap-1 text-link hover:underline"
+                class="inline-flex items-center gap-1.5 text-lav-2 hover:underline"
               >
                 GitHub
                 <ExternalIcon />
@@ -117,7 +134,7 @@ function inlineCode(text: string): string {
                 <a
                   href={link.href}
                   rel="noopener"
-                  class="inline-flex items-center gap-1 text-link hover:underline"
+                  class="inline-flex items-center gap-1.5 text-lav-2 hover:underline"
                 >
                   {link.label[lang]}
                   <ExternalIcon />
@@ -130,11 +147,11 @@ function inlineCode(text: string): string {
     </aside>
   </section>
 
-  <section class="container-site pb-4" aria-labelledby="product-others">
-    <h2 id="product-others" class="text-2xl font-bold tracking-tight text-ink">
+  <section class="container-site pt-16" aria-labelledby="product-others">
+    <h2 id="product-others" class="label-mono">
       {tr('product.others')}
     </h2>
-    <ul class="mt-6 grid gap-6 sm:grid-cols-3">
+    <ul class="mt-6 grid gap-4 sm:grid-cols-3">
       {others.map((p) => (
         <li>
           <ProductCard product={p} lang={lang} />

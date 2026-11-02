@@ -41,6 +41,22 @@ export default function MobileNav({ items, labels }: Props) {
     };
   }, [open]);
 
+  const icon = (path: string) => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      aria-hidden="true"
+      focusable="false"
+      className="h-5 w-5"
+    >
+      <path d={path} />
+    </svg>
+  );
+
   return (
     <>
       <button
@@ -50,21 +66,9 @@ export default function MobileNav({ items, labels }: Props) {
         aria-controls={panelId}
         aria-label={open ? labels.close : labels.open}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border text-ink transition-colors duration-150 hover:bg-surface-hover"
+        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line-strong text-fg transition-colors duration-150 hover:bg-bg-3"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          aria-hidden="true"
-          focusable="false"
-          className="h-5 w-5"
-        >
-          <path d="M4 7h16M4 12h16M4 17h16" />
-        </svg>
+        {icon('M4 7h16M4 12h16M4 17h16')}
       </button>
 
       {mounted &&
@@ -78,50 +82,39 @@ export default function MobileNav({ items, labels }: Props) {
             className="fixed inset-0 z-50"
           >
             <div
-              className="absolute inset-0 bg-ink/30 backdrop-blur-[2px]"
+              className="absolute inset-0 bg-bg/60 backdrop-blur-[2px]"
               onClick={() => setOpen(false)}
               aria-hidden="true"
             />
-            <div className="absolute inset-y-0 right-0 flex w-[min(20rem,85vw)] flex-col border-l border-border bg-surface shadow-2xl">
-              <div className="flex h-16 items-center justify-between border-b border-border px-4">
-                <span className="font-semibold text-ink">{labels.menu}</span>
+            <div className="absolute inset-y-0 right-0 flex w-[min(20rem,85vw)] flex-col border-l border-line bg-bg-2 shadow-2xl">
+              <div className="flex h-16 items-center justify-between border-b border-line px-4">
+                <span className="label-mono">{labels.menu}</span>
                 <button
                   ref={closeRef}
                   type="button"
                   aria-label={labels.close}
                   onClick={() => setOpen(false)}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-md text-ink transition-colors duration-150 hover:bg-surface-hover"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full text-fg transition-colors duration-150 hover:bg-bg-3"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    aria-hidden="true"
-                    focusable="false"
-                    className="h-5 w-5"
-                  >
-                    <path d="M6 6l12 12M18 6 6 18" />
-                  </svg>
+                  {icon('M6 6l12 12M18 6 6 18')}
                 </button>
               </div>
               <nav aria-label={labels.menu} className="flex-1 overflow-y-auto p-3">
                 <ul className="flex flex-col gap-1">
-                  {items.map((item) => (
+                  {items.map((item, i) => (
                     <li key={item.href}>
                       <a
                         href={item.href}
                         aria-current={item.current ? 'page' : undefined}
                         rel={item.external ? 'noopener' : undefined}
-                        className={`flex min-h-11 items-center justify-between rounded-md px-3 text-base font-medium transition-colors duration-150 ${
-                          item.current
-                            ? 'bg-accent-subtle text-ink'
-                            : 'text-ink-secondary hover:bg-surface-hover hover:text-ink'
+                        className={`flex min-h-12 items-center gap-4 rounded-lg px-3 text-lg font-medium tracking-tight transition-colors duration-150 ${
+                          item.current ? 'bg-bg-3 text-fg' : 'text-fg-2 hover:bg-bg-3 hover:text-fg'
                         }`}
                       >
-                        {item.label}
+                        <span className="label-mono w-6 text-sage">
+                          {String(i + 1).padStart(2, '0')}
+                        </span>
+                        <span className="flex-1">{item.label}</span>
                         {item.external && <span aria-hidden="true">↗</span>}
                       </a>
                     </li>

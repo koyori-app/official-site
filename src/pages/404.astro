@@ -8,17 +8,17 @@ const en = t('en');
 ---
 
 <BaseLayout lang="ja" title={ja('notfound.title')} alternates={{}}>
-  <section class="container-site py-24 text-center sm:py-32">
-    <p class="text-7xl font-bold tracking-tight text-accent-hover">404</p>
-    <h1 class="mt-6 text-3xl font-bold tracking-tight text-ink">{ja('notfound.title')}</h1>
-    <p class="mt-3 text-ink-secondary">{ja('notfound.body')}</p>
-    <p class="mt-8 text-2xl font-bold text-ink" lang="en">
+  <section class="container-site py-28 text-center sm:py-40">
+    <p class="display text-gradient text-[clamp(5rem,20vw,12rem)]">404</p>
+    <h1 class="display-ja mt-4 text-3xl text-fg sm:text-4xl">{ja('notfound.title')}</h1>
+    <p class="mt-3 text-fg-2">{ja('notfound.body')}</p>
+    <p class="display mt-10 text-2xl text-fg" lang="en">
       {en('notfound.title')}
     </p>
-    <p class="mt-2 text-ink-secondary" lang="en">
+    <p class="mt-2 text-fg-2" lang="en">
       {en('notfound.body')}
     </p>
-    <div class="mt-10 flex flex-wrap justify-center gap-3">
+    <div class="mt-12 flex flex-wrap justify-center gap-3">
       <a href={localePath('ja', '/')} class="btn btn-primary">
         {ja('notfound.home')}
       </a>

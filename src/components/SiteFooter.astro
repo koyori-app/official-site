@@ -2,7 +2,6 @@
 import type { Locale } from '../i18n/ui';
 import { localePath, t } from '../i18n/utils';
 import { githubOrg, products } from '../data/products';
-import LogoMark from './LogoMark.astro';
 
 interface Props {
   lang: Locale;
@@ -18,25 +17,22 @@ const siteLinks = [
 ];
 ---
 
-<footer class="mt-24 border-t border-border bg-surface-raised/60">
-  <div class="container-site grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr]">
+<footer class="mt-32 border-t border-line">
+  <div class="container-site grid gap-12 py-16 lg:grid-cols-[1.4fr_1fr_1fr]">
     <div>
-      <a href={localePath(lang, '/')} class="flex items-center gap-2.5 text-lg font-bold text-ink">
-        <LogoMark class="h-8 w-8" />
-        <span>Koyori</span>
-      </a>
-      <p class="mt-4 max-w-sm text-sm text-ink-secondary">{tr('footer.tagline')}</p>
+      <p class="display text-5xl text-fg sm:text-6xl">Koyori</p>
+      <p class="mt-5 max-w-sm text-fg-2">{tr('footer.tagline')}</p>
     </div>
     <nav aria-labelledby="footer-products">
-      <h2 id="footer-products" class="text-sm font-semibold text-ink">
+      <h2 id="footer-products" class="label-mono">
         {tr('footer.products')}
       </h2>
-      <ul class="mt-3 flex flex-col gap-2">
+      <ul class="mt-5 flex flex-col gap-3">
         {products.map((product) => (
           <li>
             <a
               href={localePath(lang, `/products/${product.slug}`)}
-              class="text-sm text-ink-secondary transition-colors duration-150 hover:text-ink"
+              class="text-fg-2 transition-colors duration-150 hover:text-fg"
             >
               {product.name}
             </a>
@@ -45,16 +41,16 @@ const siteLinks = [
       </ul>
     </nav>
     <nav aria-labelledby="footer-site">
-      <h2 id="footer-site" class="text-sm font-semibold text-ink">
+      <h2 id="footer-site" class="label-mono">
         {tr('footer.site')}
       </h2>
-      <ul class="mt-3 flex flex-col gap-2">
+      <ul class="mt-5 flex flex-col gap-3">
         {siteLinks.map((link) => (
           <li>
             <a
               href={link.href}
               rel={link.external ? 'noopener' : undefined}
-              class="text-sm text-ink-secondary transition-colors duration-150 hover:text-ink"
+              class="text-fg-2 transition-colors duration-150 hover:text-fg"
             >
               {link.label}
               {link.external && <span aria-hidden="true"> ↗</span>}
@@ -64,14 +60,16 @@ const siteLinks = [
       </ul>
     </nav>
   </div>
-  <div class="border-t border-border">
-    <div class="container-site flex flex-wrap items-center justify-between gap-2 py-5 text-xs text-ink-muted">
-      <p>{tr('footer.rights')}</p>
-      <p>
-        <a href="https://github.com/koyori-app/official-site" rel="noopener" class="hover:text-ink">
-          Source on GitHub ↗
-        </a>
-      </p>
+  <div class="border-t border-line">
+    <div class="container-site flex flex-wrap items-center justify-between gap-2 py-5">
+      <p class="label-mono">{tr('footer.rights')}</p>
+      <a
+        href="https://github.com/koyori-app/official-site"
+        rel="noopener"
+        class="label-mono transition-colors duration-150 hover:text-fg"
+      >
+        Source on GitHub ↗
+      </a>
     </div>
   </div>
 </footer>

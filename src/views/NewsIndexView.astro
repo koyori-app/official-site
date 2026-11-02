@@ -13,26 +13,33 @@ const news = await getNews(lang);
 ---
 
 <BaseLayout lang={lang} title={tr('news.title')} description={tr('news.pageDescription')}>
-  <section class="container-site py-16 sm:py-20">
-    <h1 class="text-4xl font-bold tracking-tight text-ink sm:text-5xl">{tr('news.title')}</h1>
-    <p class="mt-4 max-w-2xl text-lg text-ink-secondary">{tr('news.lead')}</p>
+  <section class="container-site pt-20 pb-12 sm:pt-28">
+    <p class="label-mono">News</p>
+    <h1
+      class:list={['mt-4 text-5xl text-fg sm:text-7xl', lang === 'ja' ? 'display-ja' : 'display']}
+    >
+      {tr('news.title')}
+    </h1>
+    <p class="mt-6 max-w-xl text-lg text-fg-2">{tr('news.lead')}</p>
     {news.length === 0 ? (
-      <p class="mt-12 text-ink-secondary">{tr('news.empty')}</p>
+      <p class="mt-16 text-fg-2">{tr('news.empty')}</p>
     ) : (
-      <ul class="mt-12 grid gap-4">
+      <ul class="mt-16">
         {news.map((entry) => (
           <li>
             <a
               href={localePath(lang, `/news/${newsSlug(entry)}`)}
-              class="group block rounded-2xl border border-border bg-surface-raised p-6 transition-colors duration-200 hover:border-accent"
+              class="row-link group grid gap-3 py-8 sm:grid-cols-[10rem_1fr] sm:gap-10"
             >
-              <time datetime={isoDate(entry.data.date)} class="text-sm text-ink-muted tabular-nums">
+              <time datetime={isoDate(entry.data.date)} class="label-mono pt-1.5">
                 {formatDate(entry.data.date, lang)}
               </time>
-              <h2 class="mt-2 text-xl font-bold text-ink underline-offset-4 group-hover:underline">
-                {entry.data.title}
-              </h2>
-              <p class="mt-2 text-ink-secondary">{entry.data.description}</p>
+              <div>
+                <h2 class="text-2xl font-semibold tracking-tight text-fg transition-colors group-hover:text-lav-2">
+                  {entry.data.title}
+                </h2>
+                <p class="mt-2 max-w-2xl text-fg-2">{entry.data.description}</p>
+              </div>
             </a>
           </li>
         ))}

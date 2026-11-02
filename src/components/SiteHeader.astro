@@ -20,7 +20,6 @@ const isCurrent = (path: string) => {
 };
 
 const nav = [
-  { path: '/', label: tr('nav.home') },
   { path: '/products/', label: tr('nav.products') },
   { path: '/news/', label: tr('nav.news') },
   { path: '/about/', label: tr('nav.about') },
@@ -30,32 +29,34 @@ const nav = [
   current: isCurrent(item.path),
 }));
 
-const mobileItems = [...nav, { href: githubOrg, label: tr('nav.github'), external: true }];
+const mobileItems = [
+  { href: localePath(lang, '/'), label: tr('nav.home'), current: isCurrent('/') },
+  ...nav,
+  { href: githubOrg, label: tr('nav.github'), external: true },
+];
 ---
 
-<header class="sticky top-0 z-40 border-b border-border/70 bg-surface/85 backdrop-blur supports-[backdrop-filter]:bg-surface/75">
+<header class="sticky top-0 z-40 border-b border-line bg-bg/70 backdrop-blur-md">
   <div class="container-site flex h-16 items-center justify-between gap-4">
     <a
       href={localePath(lang, '/')}
-      class="flex items-center gap-2.5 text-lg font-bold tracking-tight text-ink"
+      class="flex items-center gap-3 text-fg"
       aria-label={tr('site.name')}
     >
-      <LogoMark class="h-8 w-8" />
-      <span>Koyori</span>
+      <LogoMark class="h-7 w-7" />
+      <span class="text-lg font-semibold tracking-tight">Koyori</span>
     </a>
 
     <nav aria-label={tr('nav.primary')} class="hidden md:block">
-      <ul class="flex items-center gap-1">
+      <ul class="flex items-center gap-7">
         {nav.map((item) => (
           <li>
             <a
               href={item.href}
               aria-current={item.current ? 'page' : undefined}
               class:list={[
-                'inline-flex min-h-9 items-center rounded-md px-3 text-sm font-medium transition-colors duration-150',
-                item.current
-                  ? 'bg-accent-subtle text-ink'
-                  : 'text-ink-secondary hover:bg-surface-hover hover:text-ink',
+                'label-mono inline-flex min-h-9 items-center border-b transition-colors duration-150 hover:text-fg',
+                item.current ? 'border-lav text-fg' : 'border-transparent',
               ]}
             >
               {item.label}
@@ -66,7 +67,7 @@ const mobileItems = [...nav, { href: githubOrg, label: tr('nav.github'), externa
           <a
             href={githubOrg}
             rel="noopener"
-            class="inline-flex min-h-9 items-center gap-1 rounded-md px-3 text-sm font-medium text-ink-secondary transition-colors duration-150 hover:bg-surface-hover hover:text-ink"
+            class="label-mono inline-flex min-h-9 items-center gap-1 transition-colors duration-150 hover:text-fg"
           >
             {tr('nav.github')}
             <span aria-hidden="true">↗</span>
@@ -75,7 +76,7 @@ const mobileItems = [...nav, { href: githubOrg, label: tr('nav.github'), externa
       </ul>
     </nav>
 
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-3">
       <LocaleSwitch lang={lang} targets={switchTargets} />
       <div class="md:hidden">
         <MobileNav

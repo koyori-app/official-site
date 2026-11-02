@@ -29,32 +29,37 @@ for (const other of translations) {
   alternates={alternates}
   ogType="article"
 >
-  <article class="container-site py-16 sm:py-20">
+  <article class="container-site pt-20 pb-12 sm:pt-28">
     <div class="mx-auto max-w-3xl">
-      <a href={localePath(lang, '/news/')} class="text-sm font-semibold text-link hover:underline">
+      <a href={localePath(lang, '/news/')} class="label-mono transition-colors hover:text-fg">
         ← {tr('news.back')}
       </a>
-      <header class="mt-6">
-        <time datetime={isoDate(entry.data.date)} class="text-sm text-ink-muted tabular-nums">
+      <header class="mt-8">
+        <time datetime={isoDate(entry.data.date)} class="label-mono">
           {formatDate(entry.data.date, lang)}
         </time>
-        <h1 class="mt-2 text-3xl font-bold tracking-tight text-ink text-balance sm:text-4xl">
+        <h1
+          class:list={[
+            'mt-4 text-4xl text-fg sm:text-5xl',
+            lang === 'ja' ? 'display-ja' : 'display',
+          ]}
+        >
           {entry.data.title}
         </h1>
         {translations.map((other) => (
-          <p class="mt-4 text-sm">
+          <p class="mt-5">
             <a
               href={alternates[other.data.lang]}
               hreflang={other.data.lang}
               lang={other.data.lang}
-              class="text-link underline underline-offset-4"
+              class="label-mono text-lav-2 underline underline-offset-4"
             >
               {tr('news.alt')}
             </a>
           </p>
         ))}
       </header>
-      <div class="prose mt-10 text-ink-secondary">
+      <div class="prose mt-12 border-t border-line pt-10 text-fg-2">
         <Content />
       </div>
     </div>

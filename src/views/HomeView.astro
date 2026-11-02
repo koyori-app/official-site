@@ -5,25 +5,14 @@ import { githubOrg, products } from '../data/products';
 import { getNews, newsSlug } from '../lib/news';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
-import ProductTabs from '../components/react/ProductTabs';
+import ProductRow from '../components/ProductRow.astro';
+import KoyoriScene from '../components/react/KoyoriScene';
 
 interface Props {
   lang: Locale;
 }
 const { lang } = Astro.props;
 const tr = t(lang);
-
-const tabProducts = products.map((p) => ({
-  slug: p.slug,
-  name: p.name,
-  tagline: p.tagline[lang],
-  description: p.description[lang],
-  features: p.features[lang],
-  stack: p.stack,
-  statusLabel: tr(`product.status.${p.status}`),
-  href: localePath(lang, `/products/${p.slug}`),
-  tone: p.tone,
-}));
 
 const principles = (['oss', 'selfhost', 'consistent', 'rust'] as const).map((key) => ({
   title: tr(`principles.${key}.title`),
@@ -35,108 +24,138 @@ const news = (await getNews(lang)).slice(0, 3);
 
 <BaseLayout lang={lang}>
   <section class="relative isolate overflow-hidden">
-    <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
-      <div class="absolute -top-32 right-[-10%] h-[28rem] w-[28rem] rounded-full bg-accent/50 blur-3xl"></div>
-      <div class="absolute top-40 left-[-15%] h-[24rem] w-[24rem] rounded-full bg-accent-soft/80 blur-3xl"></div>
+    <div class="absolute inset-0 -z-20" aria-hidden="true">
+      <div class="absolute inset-0 bg-[radial-gradient(60%_60%_at_75%_40%,rgba(110,92,143,0.35),transparent_70%)]"></div>
+      <KoyoriScene client:idle className="block h-full w-full" />
+      <div class="absolute inset-0 bg-linear-to-r from-bg via-bg/55 to-transparent md:via-bg/30"></div>
+      <div class="absolute inset-x-0 bottom-0 h-48 bg-linear-to-b from-transparent to-bg"></div>
     </div>
-    <div class="container-site py-20 sm:py-28 lg:py-32">
-      <div class="max-w-3xl">
-        <p class="text-sm font-semibold tracking-wide text-sage uppercase">{tr('hero.eyebrow')}</p>
-        <h1 class="mt-4 text-4xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl">
-          <span class="block">{tr('hero.title.1')}</span>
-          <span class="block">{tr('hero.title.2')}</span>
-        </h1>
-        <p class="mt-6 max-w-2xl text-lg text-ink-secondary sm:text-xl">{tr('hero.lead')}</p>
-        <div class="mt-10 flex flex-wrap gap-3">
-          <a href={localePath(lang, '/products/')} class="btn btn-primary">
-            {tr('hero.cta.products')}
-          </a>
-          <a href={githubOrg} rel="noopener" class="btn btn-ghost">
-            {tr('hero.cta.github')}
-            <span aria-hidden="true">↗</span>
-          </a>
-        </div>
+
+    <div class="container-site flex min-h-[calc(100svh-4rem)] flex-col justify-end pt-24 pb-14 sm:pb-20">
+      <p class="label-mono flex items-center gap-3">
+        <span class="h-px w-8 bg-sage" aria-hidden="true"></span>
+        {tr('hero.eyebrow')}
+      </p>
+      <h1
+        class:list={[
+          'mt-6 max-w-6xl text-fg text-[clamp(2.1rem,6.5vw,6rem)]',
+          lang === 'ja' ? 'display-ja' : 'display',
+        ]}
+      >
+        <span class="block">{tr('hero.title.1')}</span>
+        <span class="block text-gradient pb-[0.08em]">{tr('hero.title.2')}</span>
+      </h1>
+      <p class="mt-8 max-w-xl text-lg text-fg-2 sm:text-xl">{tr('hero.lead')}</p>
+      <div class="mt-10 flex flex-wrap gap-3">
+        <a href={localePath(lang, '/products/')} class="btn btn-primary">
+          {tr('hero.cta.products')}
+        </a>
+        <a href={githubOrg} rel="noopener" class="btn btn-ghost">
+          {tr('hero.cta.github')}
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+
+      <div class="mt-16 flex flex-wrap items-end justify-between gap-6 border-t border-line pt-6">
+        <ol class="flex flex-wrap gap-x-8 gap-y-2">
+          {products.map((product, i) => (
+            <li>
+              <a
+                href={localePath(lang, `/products/${product.slug}`)}
+                class="label-mono inline-flex items-center gap-2 transition-colors duration-150 hover:text-fg"
+              >
+                <span class="text-sage">{String(i + 1).padStart(2, '0')}</span>
+                {product.name.replace('Koyori ', '')}
+              </a>
+            </li>
+          ))}
+        </ol>
+        <p class="label-mono hidden sm:block" aria-hidden="true">
+          Scroll ↓
+        </p>
       </div>
     </div>
   </section>
 
-  <section class="container-site py-16 sm:py-20" aria-labelledby="home-products">
-    <div class="flex flex-wrap items-end justify-between gap-4">
-      <SectionHeading id="home-products" title={tr('products.title')} lead={tr('products.lead')} />
-      <a
-        href={localePath(lang, '/products/')}
-        class="text-sm font-semibold text-link underline-offset-4 hover:underline"
-      >
+  <section class="container-site pt-24 pb-10 sm:pt-32" aria-labelledby="home-products">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <SectionHeading
+        id="home-products"
+        index="01"
+        eyebrow="Products"
+        title={tr('products.title')}
+        lead={tr('products.lead')}
+        lang={lang}
+      />
+      <a href={localePath(lang, '/products/')} class="label-mono transition-colors hover:text-fg">
         {tr('products.viewAll')} →
       </a>
     </div>
-    <div class="mt-10">
-      <ProductTabs
-        client:visible
-        products={tabProducts}
-        labels={{
-          features: tr('product.features'),
-          detail: tr('product.detail'),
-          list: tr('products.title'),
-        }}
-      />
-    </div>
+    <ol class="mt-14">
+      {products.map((product, i) => (
+        <li>
+          <ProductRow product={product} lang={lang} index={i + 1} />
+        </li>
+      ))}
+    </ol>
   </section>
 
-  <section class="bg-surface-raised/60 py-16 sm:py-20" aria-labelledby="home-principles">
-    <div class="container-site">
+  <section class="container-site py-24 sm:py-32" aria-labelledby="home-principles">
+    <SectionHeading
+      id="home-principles"
+      index="02"
+      eyebrow="Principles"
+      title={tr('principles.title')}
+      lead={tr('principles.lead')}
+      lang={lang}
+    />
+    <ol class="mt-14 grid gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-2">
+      {principles.map((item, i) => (
+        <li class="relative bg-bg-2 p-8 sm:p-10">
+          <span
+            class="display block text-6xl text-transparent sm:text-7xl"
+            style="-webkit-text-stroke: 1px var(--koyori-lav-deep);"
+            aria-hidden="true"
+          >
+            {String(i + 1).padStart(2, '0')}
+          </span>
+          <h3 class="mt-8 max-w-[16em] text-2xl font-semibold tracking-tight text-fg">
+            {item.title}
+          </h3>
+          <p class="mt-4 max-w-md text-fg-2">{item.body}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="container-site pb-24" aria-labelledby="home-news">
+    <div class="flex flex-wrap items-end justify-between gap-6">
       <SectionHeading
-        id="home-principles"
-        title={tr('principles.title')}
-        lead={tr('principles.lead')}
+        id="home-news"
+        index="03"
+        eyebrow="News"
+        title={tr('news.title')}
+        lead={tr('news.lead')}
+        lang={lang}
       />
-      <ul class="mt-10 grid gap-6 sm:grid-cols-2">
-        {principles.map((item, i) => (
-          <li class="rounded-2xl border border-border bg-surface p-6">
-            <span
-              class:list={[
-                'inline-flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold',
-                i % 2 === 0 ? 'bg-accent text-on-accent' : 'bg-accent-soft text-ink',
-              ]}
-              aria-hidden="true"
-            >
-              {String(i + 1).padStart(2, '0')}
-            </span>
-            <h3 class="mt-4 text-lg font-bold text-ink">{item.title}</h3>
-            <p class="mt-2 text-ink-secondary">{item.body}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
-  <section class="container-site py-16 sm:py-20" aria-labelledby="home-news">
-    <div class="flex flex-wrap items-end justify-between gap-4">
-      <SectionHeading id="home-news" title={tr('news.title')} lead={tr('news.lead')} />
-      <a
-        href={localePath(lang, '/news/')}
-        class="text-sm font-semibold text-link underline-offset-4 hover:underline"
-      >
+      <a href={localePath(lang, '/news/')} class="label-mono transition-colors hover:text-fg">
         {tr('news.viewAll')} →
       </a>
     </div>
     {news.length === 0 ? (
-      <p class="mt-8 text-ink-secondary">{tr('news.empty')}</p>
+      <p class="mt-10 text-fg-2">{tr('news.empty')}</p>
     ) : (
-      <ul class="mt-8 divide-y divide-border border-y border-border">
+      <ul class="mt-12">
         {news.map((entry) => (
           <li>
             <a
               href={localePath(lang, `/news/${newsSlug(entry)}`)}
-              class="group flex flex-col gap-1 py-5 sm:flex-row sm:items-baseline sm:gap-6"
+              class="row-link group flex flex-col gap-2 py-6 sm:flex-row sm:items-baseline sm:gap-10"
             >
-              <time
-                datetime={isoDate(entry.data.date)}
-                class="shrink-0 text-sm text-ink-muted tabular-nums"
-              >
+              <time datetime={isoDate(entry.data.date)} class="label-mono shrink-0 sm:w-40">
                 {formatDate(entry.data.date, lang)}
               </time>
-              <span class="font-semibold text-ink underline-offset-4 group-hover:underline">
+              <span class="text-xl font-medium tracking-tight text-fg transition-colors group-hover:text-lav-2">
                 {entry.data.title}
               </span>
             </a>
@@ -146,17 +165,23 @@ const news = (await getNews(lang)).slice(0, 3);
     )}
   </section>
 
-  <section class="container-site pb-8">
-    <div class="relative overflow-hidden rounded-3xl bg-linear-to-br from-accent via-accent-subtle to-accent-soft px-6 py-14 text-center sm:px-12">
-      <h2 class="text-3xl font-bold tracking-tight text-on-accent sm:text-4xl">
+  <section class="container-site py-24 sm:py-32">
+    <div class="relative overflow-hidden rounded-3xl border border-line bg-bg-2 px-6 py-20 text-center sm:px-12 sm:py-28">
+      <div
+        class="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_80%_at_50%_120%,rgba(196,181,223,0.28),transparent_70%)]"
+        aria-hidden="true"
+      ></div>
+      <p class="label-mono relative">04 — Contribute</p>
+      <h2
+        class:list={[
+          'relative mt-5 text-[clamp(2.5rem,7vw,5.5rem)] text-gradient pb-[0.1em]',
+          lang === 'ja' ? 'display-ja' : 'display',
+        ]}
+      >
         {tr('cta.title')}
       </h2>
-      <p class="mx-auto mt-4 max-w-xl text-on-accent/80">{tr('cta.body')}</p>
-      <a
-        href={githubOrg}
-        rel="noopener"
-        class="btn mt-8 border-on-accent/20 bg-surface-raised text-ink hover:bg-surface"
-      >
+      <p class="relative mx-auto mt-5 max-w-xl text-fg-2">{tr('cta.body')}</p>
+      <a href={githubOrg} rel="noopener" class="btn btn-primary relative mt-10">
         {tr('cta.button')}
         <span aria-hidden="true">↗</span>
       </a>

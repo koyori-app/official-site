@@ -1,82 +1,59 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource-variable/noto-sans-jp';
+@import '@fontsource-variable/jetbrains-mono';
 
 /*
- * Koyori のデザイントークン。koyori-app/ui の components/tokens.css と同じ値を基準にし、
- * サイト用に背景・枝分かれ色を追加している。ダークモードは同じ変数を上書きする。
+ * Koyori のサイト用トークン。ダーク基調 1 本。
+ * ラベンダー #c4b5df とセージ #5f7a66 は koyori-app/ui の tokens.css と共通。
  */
 :root {
-  --koyori-font-family:
-    system-ui, -apple-system, 'Segoe UI', Roboto, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  --font-sans: 'Space Grotesk Variable', 'Noto Sans JP Variable', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
-  --koyori-color-accent: #c4b5df;
-  --koyori-color-accent-hover: #b6a3d4;
-  --koyori-color-on-accent: #352d46;
-  --koyori-color-accent-soft: #dbe5dc;
-  --koyori-color-accent-soft-hover: #cadbcf;
-  --koyori-color-accent-subtle: #e4ddf0;
-  --koyori-color-sage: #5f7a66;
-  --koyori-color-text: #383440;
-  --koyori-color-text-secondary: #5f5968;
-  --koyori-color-text-muted: #706879;
-  --koyori-color-surface: #faf8f5;
-  --koyori-color-surface-raised: #ffffff;
-  --koyori-color-surface-hover: #e6dff0;
-  --koyori-color-border: #e3dde9;
-  --koyori-color-selection-indicator: #594867;
-  --koyori-color-link: #594867;
+  --koyori-bg: #0e0d12;
+  --koyori-bg-2: #15131b;
+  --koyori-bg-3: #1d1a26;
+  --koyori-line: rgba(236, 232, 240, 0.1);
+  --koyori-line-strong: rgba(236, 232, 240, 0.22);
+  --koyori-fg: #ece8f0;
+  --koyori-fg-2: #b4acc0;
+  --koyori-fg-3: #7d7588;
+  --koyori-lav: #c4b5df;
+  --koyori-lav-2: #dfd5f3;
+  --koyori-lav-deep: #6e5c8f;
+  --koyori-on-lav: #231c31;
+  --koyori-sage: #9fc2a9;
+  --koyori-sage-deep: #5f7a66;
 
-  --koyori-motion-fast: 140ms;
-  --koyori-motion-base: 220ms;
-  --koyori-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --koyori-color-accent: #b6a3d4;
-    --koyori-color-accent-hover: #c4b5df;
-    --koyori-color-on-accent: #241d33;
-    --koyori-color-accent-soft: #2f3b33;
-    --koyori-color-accent-soft-hover: #3a4a40;
-    --koyori-color-accent-subtle: #332b47;
-    --koyori-color-sage: #9fb8a6;
-    --koyori-color-text: #ece8f0;
-    --koyori-color-text-secondary: #bdb5c7;
-    --koyori-color-text-muted: #9a91a6;
-    --koyori-color-surface: #1b1920;
-    --koyori-color-surface-raised: #242129;
-    --koyori-color-surface-hover: #2d2936;
-    --koyori-color-border: #342f3d;
-    --koyori-color-selection-indicator: #d2c4e8;
-    --koyori-color-link: #d2c4e8;
-  }
+  --koyori-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: dark;
 }
 
 @theme inline {
-  --font-sans: var(--koyori-font-family);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 
-  --color-accent: var(--koyori-color-accent);
-  --color-accent-hover: var(--koyori-color-accent-hover);
-  --color-on-accent: var(--koyori-color-on-accent);
-  --color-accent-soft: var(--koyori-color-accent-soft);
-  --color-accent-soft-hover: var(--koyori-color-accent-soft-hover);
-  --color-accent-subtle: var(--koyori-color-accent-subtle);
-  --color-sage: var(--koyori-color-sage);
-  --color-ink: var(--koyori-color-text);
-  --color-ink-secondary: var(--koyori-color-text-secondary);
-  --color-ink-muted: var(--koyori-color-text-muted);
-  --color-surface: var(--koyori-color-surface);
-  --color-surface-raised: var(--koyori-color-surface-raised);
-  --color-surface-hover: var(--koyori-color-surface-hover);
-  --color-border: var(--koyori-color-border);
-  --color-indicator: var(--koyori-color-selection-indicator);
-  --color-link: var(--koyori-color-link);
+  --color-bg: var(--koyori-bg);
+  --color-bg-2: var(--koyori-bg-2);
+  --color-bg-3: var(--koyori-bg-3);
+  --color-line: var(--koyori-line);
+  --color-line-strong: var(--koyori-line-strong);
+  --color-fg: var(--koyori-fg);
+  --color-fg-2: var(--koyori-fg-2);
+  --color-fg-3: var(--koyori-fg-3);
+  --color-lav: var(--koyori-lav);
+  --color-lav-2: var(--koyori-lav-2);
+  --color-lav-deep: var(--koyori-lav-deep);
+  --color-on-lav: var(--koyori-on-lav);
+  --color-sage: var(--koyori-sage);
+  --color-sage-deep: var(--koyori-sage-deep);
 
-  --ease-out-soft: var(--koyori-ease-out);
+  --ease-soft: var(--koyori-ease);
 }
 
 @layer base {
   html {
-    color-scheme: light dark;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
@@ -89,72 +66,194 @@
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
   }
 
   body {
-    background-color: var(--koyori-color-surface);
-    color: var(--koyori-color-text);
-    font-family: var(--koyori-font-family);
+    background-color: var(--koyori-bg);
+    color: var(--koyori-fg);
+    font-family: var(--font-sans);
+    font-feature-settings: 'ss01', 'cv11';
     line-height: 1.7;
     overflow-wrap: anywhere;
-    /* 小書き仮名や長音符を行頭に置かない */
     line-break: strict;
     -webkit-font-smoothing: antialiased;
   }
 
+  /* 画面全体に薄い粒子ノイズ */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.07;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
   :focus-visible {
-    outline: 2px solid var(--koyori-color-text);
-    outline-offset: 2px;
-    border-radius: 4px;
+    outline: 2px solid var(--koyori-lav-2);
+    outline-offset: 3px;
+    border-radius: 2px;
   }
 
   ::selection {
-    background-color: var(--koyori-color-accent);
-    color: var(--koyori-color-on-accent);
+    background-color: var(--koyori-lav);
+    color: var(--koyori-on-lav);
   }
 }
 
 @utility container-site {
   width: 100%;
-  max-width: 72rem;
+  max-width: 80rem;
   margin-inline: auto;
-  padding-inline: 1rem;
+  padding-inline: 1.25rem;
   @media (width >= 40rem) {
-    padding-inline: 1.5rem;
+    padding-inline: 2rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 3rem;
   }
 }
 
-/* お知らせ本文（Markdown）の見た目 */
+/* 等幅の小さなラベル。「01 / TASK」のような使い方 */
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--koyori-fg-3);
+}
+
+/* 見出し用。欧文は Space Grotesk、和文は Noto Sans JP が当たる */
+@utility display {
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+@utility display-ja {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.18;
+}
+
+/* ラベンダー → セージのグラデーション文字 */
+@utility text-gradient {
+  background: linear-gradient(
+    100deg,
+    var(--koyori-lav-2) 0%,
+    var(--koyori-lav) 40%,
+    var(--koyori-sage) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 罫線の細い枠 */
+@utility hairline {
+  border: 1px solid var(--koyori-line);
+}
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 3rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition:
+      background-color 180ms var(--koyori-ease),
+      border-color 180ms var(--koyori-ease),
+      color 180ms var(--koyori-ease),
+      transform 180ms var(--koyori-ease);
+  }
+  .btn:active {
+    transform: scale(0.97);
+  }
+  .btn-primary {
+    background-color: var(--koyori-lav);
+    color: var(--koyori-on-lav);
+  }
+  .btn-ghost {
+    border-color: var(--koyori-line-strong);
+    color: var(--koyori-fg);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover {
+      background-color: var(--koyori-lav-2);
+    }
+    .btn-ghost:hover {
+      border-color: var(--koyori-lav);
+      color: var(--koyori-lav-2);
+    }
+  }
+
+  /* 一覧の行。全体がリンク */
+  .row-link {
+    position: relative;
+    display: block;
+    border-top: 1px solid var(--koyori-line);
+    transition: background-color 240ms var(--koyori-ease);
+  }
+  .row-link:last-child {
+    border-bottom: 1px solid var(--koyori-line);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .row-link:hover {
+      background-color: rgba(196, 181, 223, 0.05);
+    }
+  }
+}
+
+/* お知らせ本文（Markdown） */
 .prose {
   & > * + * {
-    margin-top: 1em;
+    margin-top: 1.1em;
   }
   & h2 {
-    margin-top: 2em;
-    font-size: 1.375rem;
-    font-weight: 700;
-    line-height: 1.4;
-    letter-spacing: -0.01em;
+    margin-top: 2.2em;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    color: var(--koyori-fg);
   }
   & h3 {
     margin-top: 1.6em;
     font-size: 1.125rem;
-    font-weight: 700;
+    font-weight: 600;
+    color: var(--koyori-fg);
+  }
+  & strong {
+    color: var(--koyori-fg);
+    font-weight: 600;
   }
   & a {
-    color: var(--koyori-color-link);
+    color: var(--koyori-lav-2);
     text-decoration: underline;
-    text-underline-offset: 0.2em;
-    text-decoration-color: var(--koyori-color-accent);
+    text-underline-offset: 0.25em;
+    text-decoration-color: var(--koyori-lav-deep);
   }
   & a:hover {
     text-decoration-color: currentColor;
   }
   & ul,
   & ol {
-    padding-left: 1.5em;
+    padding-left: 1.4em;
   }
   & ul {
     list-style: disc;
@@ -162,34 +261,40 @@
   & ol {
     list-style: decimal;
   }
+  & li::marker {
+    color: var(--koyori-sage);
+  }
   & li + li {
-    margin-top: 0.35em;
+    margin-top: 0.4em;
   }
   & code {
-    font-size: 0.9em;
+    font-family: var(--font-mono);
+    font-size: 0.875em;
     padding: 0.1em 0.4em;
     border-radius: 4px;
-    background-color: var(--koyori-color-accent-subtle);
+    background-color: var(--koyori-bg-3);
+    color: var(--koyori-lav-2);
   }
   & pre {
-    padding: 1rem;
+    padding: 1rem 1.25rem;
     border-radius: 8px;
     overflow-x: auto;
-    background-color: var(--koyori-color-surface-raised);
-    border: 1px solid var(--koyori-color-border);
+    background-color: var(--koyori-bg-2);
+    border: 1px solid var(--koyori-line);
   }
   & pre code {
     padding: 0;
     background: none;
+    color: inherit;
   }
   & blockquote {
     padding-left: 1rem;
-    border-left: 3px solid var(--koyori-color-accent);
-    color: var(--koyori-color-text-secondary);
+    border-left: 2px solid var(--koyori-sage);
+    color: var(--koyori-fg-2);
   }
   & hr {
     border: 0;
-    border-top: 1px solid var(--koyori-color-border);
+    border-top: 1px solid var(--koyori-line);
   }
   & table {
     width: 100%;
@@ -199,56 +304,7 @@
   & th,
   & td {
     padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid var(--koyori-color-border);
+    border-bottom: 1px solid var(--koyori-line);
     text-align: left;
-  }
-}
-
-/* ボタン。koyori-app/ui の Button と同じ寸法感（最小高さ 36px、角丸 8px） */
-@layer components {
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    min-height: 2.75rem;
-    padding: 0.5rem 1.25rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.9375rem;
-    line-height: 1.3;
-    text-decoration: none;
-    border: 1px solid transparent;
-    transition:
-      background-color var(--koyori-motion-fast) var(--koyori-ease-out),
-      border-color var(--koyori-motion-fast) var(--koyori-ease-out),
-      transform var(--koyori-motion-fast) var(--koyori-ease-out);
-  }
-  .btn:active {
-    transform: scale(0.98);
-  }
-  .btn-primary {
-    background-color: var(--koyori-color-accent);
-    color: var(--koyori-color-on-accent);
-  }
-  @media (hover: hover) and (pointer: fine) {
-    .btn-primary:hover {
-      background-color: var(--koyori-color-accent-hover);
-    }
-    .btn-secondary:hover {
-      background-color: var(--koyori-color-accent-soft-hover);
-    }
-    .btn-ghost:hover {
-      background-color: var(--koyori-color-surface-hover);
-    }
-  }
-  .btn-secondary {
-    background-color: var(--koyori-color-accent-soft);
-    color: var(--koyori-color-text);
-  }
-  .btn-ghost {
-    background-color: transparent;
-    border-color: var(--koyori-color-border);
-    color: var(--koyori-color-text);
   }
 }
