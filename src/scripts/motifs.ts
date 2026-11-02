@@ -1,13 +1,17 @@
 import { animateWhileVisible, fitCanvas, strokeCord, type Point } from './cord2d';
 
 /**
- * プロダクトページの小さな動くモチーフ。すべて 2D canvas で、three.js は使わない。
+ * プロダクトページのモチーフ。すべて 2D canvas で、three.js は使わない。
  *   task: 縦糸と横糸の織り。終わったマス目に印がつく
  *   vrt : baseline の糸と今回の糸を重ね、走査線が差分を見つける
  *   ui  : 1 本の糸（共通ソース）が 2 本（Vue と React）に分かれる
  *   arc : ガントチャートの帯を、依存関係の糸が弧でつなぐ
- * 動きを減らす設定では 1 枚だけ描く。画面外では止める。
+ * 画面に入ったときに一度だけ END 秒かけて描き進め、最後の 1 枚で止まる（繰り返さない）。
+ * 動きを減らす設定では最後の 1 枚だけを描く。
  */
+
+/** 描き終わるまでの秒数 */
+const END = 3.2;
 
 type Palette = {
   strand: string;
@@ -71,7 +75,7 @@ const task: Draw = (ctx, w, h, t, p) => {
   }
   // 終わったタスク: マス目に順に印がつく
   const cells = (cols - 1) * (rows - 1);
-  const done = Math.floor((t * 1.2) % (cells + 6));
+  const done = Math.min(Math.floor(t * 3), Math.round(cells * 0.6));
   for (let k = 0; k < Math.min(done, cells); k++) {
     const i = (k * 3) % (cols - 1);
     const j = Math.floor(k / (cols - 1)) % (rows - 1);
@@ -93,7 +97,7 @@ const vrt: Draw = (ctx, w, h, t, p) => {
   const pad = w * 0.08;
   const mid = h * 0.5;
   const cw = Math.max(8, Math.min(w, h) * 0.028);
-  const cycle = ((t + 4.5) % 7) / 7;
+  const cycle = Math.min(t / END, 1) * 0.86;
   const scanX = pad + (w - pad * 2) * smooth(clamp01(cycle * 1.25));
   const bumpCenter = w * 0.62;
   const path = (diff: number) => {
@@ -140,8 +144,8 @@ const vrt: Draw = (ctx, w, h, t, p) => {
     ctx.lineWidth = 1.5;
     ctx.strokeRect(bx, by, bw, bh);
     ctx.fillStyle = p.ink;
-    ctx.font = '600 11px "JetBrains Mono Variable", monospace';
-    ctx.fillText('DIFF', bx + 8, by + 18);
+    ctx.font = '500 12px "Instrument Sans Variable", sans-serif';
+    ctx.fillText('diff', bx + 8, by + 18);
     ctx.restore();
   }
   ctx.fillStyle = p.ink;
@@ -185,14 +189,14 @@ const ui: Draw = (ctx, w, h, t, p) => {
     ctx.fillRect(pt.x + 8, pt.y - chei / 2 + 20, cwid * 0.7, 3);
     ctx.fillRect(pt.x + 8, pt.y - chei / 2 + 28, cwid * 0.55, 3);
     ctx.fillStyle = p.ink;
-    ctx.font = '500 11px "JetBrains Mono Variable", monospace';
+    ctx.font = '500 12px "Instrument Sans Variable", sans-serif';
     ctx.fillText(label, pt.x, pt.y + chei / 2 + 16);
   };
-  card(top[top.length - 1], 'VUE', p.sageDeep);
-  card(bottom[bottom.length - 1], 'REACT', p.lavDeep);
+  card(top[top.length - 1], 'Vue', p.sageDeep);
+  card(bottom[bottom.length - 1], 'React', p.lavDeep);
   ctx.fillStyle = p.ink;
-  ctx.font = '500 11px "JetBrains Mono Variable", monospace';
-  ctx.fillText('MITOSIS', w * 0.04, split.y - cw - 6);
+  ctx.font = '500 12px "Instrument Sans Variable", sans-serif';
+  ctx.fillText('Mitosis', w * 0.04, split.y - cw - 6);
 };
 
 const arc: Draw = (ctx, w, h, t, p) => {
@@ -230,7 +234,7 @@ const arc: Draw = (ctx, w, h, t, p) => {
     y: top + b.r * rowH + (rowH - barH) / 2,
     w: b.d * unit,
   });
-  const cycle = ((t + 5) % 9) / 9;
+  const cycle = Math.min(t / END, 1) * 0.75;
   deps.forEach(([a, b], k) => {
     const A = rect(bars[a]);
     const B = rect(bars[b]);
@@ -290,15 +294,27 @@ export function mountMotif(canvas: HTMLCanvasElement) {
     sageDeep: v('--koyori-sage-deep'),
   };
   let size = fitCanvas(canvas, ctx);
+  let shown = END;
   const render = (t: number) => {
+    shown = t;
     ctx.clearRect(0, 0, size.width, size.height);
     draw(ctx, size.width, size.height, t, palette);
   };
-  const loop = animateWhileVisible(canvas, (t) => render(t === 0 ? 4.2 : t));
+  // time = 0 は「止めて 1 枚描いて」の合図（画面外、または動きを減らす設定）
+  let startedAt = -1;
+  const loop = animateWhileVisible(canvas, (time) => {
+    if (time === 0) {
+      render(END);
+      return;
+    }
+    if (startedAt < 0) startedAt = time;
+    const t = Math.min(time - startedAt, END);
+    render(t);
+    return t < END;
+  });
   const ro = new ResizeObserver(() => {
     size = fitCanvas(canvas, ctx);
-    loop.wake();
-    render(4.2);
+    render(shown);
   });
   ro.observe(canvas);
   canvas.dataset.ready = 'true';

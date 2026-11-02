@@ -1,7 +1,5 @@
 import {
-  CanvasTexture,
   DoubleSide,
-  LinearFilter,
   Mesh,
   NormalBlending,
   PerspectiveCamera,
@@ -15,17 +13,19 @@ import {
   type IUniform,
 } from 'three';
 import { paperFragment, paperVertex, stripFragment, stripVertex } from './shaders';
-import { drawText, loadFonts } from './text';
 
 /**
  * トップのヒーロー。紙（生成り）の上を、4 色の紙の帯を撚った紙縒りが縫うように通り、
- * 見出しの文字の上をくぐったり越えたりしながら、最後は 4 本の糸にほどけて下のプロダクトへ続く。
+ * 最後は 4 本の糸にほどけて、下に並ぶ 4 つのプロダクトの列へ降りていく。
+ * 見出しは DOM のまま紙の上に置き、紐は見出しを避けた側を通す。
  *
  * 形の基準はすべて DOM から読む。
  *   [data-gl-anchor="start"] 紙縒りの始点
  *   [data-gl-anchor="split"] ほどけ始める点
  *   [data-gl-exit]           4 本の糸の出口（見えているものを使う。x だけを使い、y は canvas の下端）
- *   [data-gl-text]           WebGL の紙面に刷る見出しの行
+ *
+ * 動きは 3 つだけ: 読み込み時に紐が引かれていく一度きりの登場、紐がゆっくり撚れる回転、
+ * ポインターが近くを通ったときに糸が弾かれる反応。動きを減らす設定では 1 フレームだけ描く。
  */
 
 const FOV = 30;
@@ -60,21 +60,10 @@ export function mount(hero: HTMLElement, canvas: HTMLCanvasElement): () => void 
   const tanHalf = Math.tan(((FOV / 2) * Math.PI) / 180);
 
   // ---- 紙面 ----
-  const textCanvas = document.createElement('canvas');
-  const textTexture = new CanvasTexture(textCanvas);
-  textTexture.minFilter = LinearFilter;
-  textTexture.magFilter = LinearFilter;
-  textTexture.generateMipmaps = false;
-
   const holes = Array.from({ length: 16 }, () => new Vector4());
   const paperUniforms: Uniforms = {
-    uText: { value: textTexture },
-    uHasText: { value: 0 },
-    uRes: { value: new Vector2(1, 1) },
     uDpr: { value: 1 },
     uPaper: { value: srgb(PAPER) },
-    uPointer: { value: new Vector2(-9999, -9999) },
-    uPointerOn: { value: 0 },
     uHoles: { value: holes },
     uHoleCount: { value: 0 },
     uHoleR: { value: 10 },
@@ -101,7 +90,6 @@ export function mount(hero: HTMLElement, canvas: HTMLCanvasElement): () => void 
     uK: { value: 1 },
     uRoll: { value: 0 },
     uSJ: { value: 0.7 },
-    uTime: { value: 0 },
     uWEnd: { value: 0.01 },
     uPluckAmp: { value: 0 },
     uPluckT: { value: 0 },
@@ -154,9 +142,6 @@ export function mount(hero: HTMLElement, canvas: HTMLCanvasElement): () => void 
   };
   const visible = (el: Element) => el.getClientRects().length > 0;
 
-  let textDirty = true;
-  let fontsLoaded = false;
-
   const layout = () => {
     const width = canvas.clientWidth || 1;
     const height = canvas.clientHeight || 1;
@@ -175,7 +160,6 @@ export function mount(hero: HTMLElement, canvas: HTMLCanvasElement): () => void 
     paper.scale.set(view.ww * 1.04, view.hw * 1.04, 1);
 
     const buffer = renderer.getDrawingBufferSize(new Vector2());
-    paperUniforms.uRes.value.copy(buffer);
     paperUniforms.uDpr.value = buffer.x / width;
 
     const box = canvas.getBoundingClientRect();
@@ -195,18 +179,8 @@ export function mount(hero: HTMLElement, canvas: HTMLCanvasElement): () => void 
     const R = Math.min(Math.max(Math.min(width, height) * 0.024, 9), 19) * pxToWorld;
     const A = R * 2.5;
     const lambdaPx = Math.min(Math.max(width * 0.2, 150), 300);
-    let omega = (Math.PI * 2) / (lambdaPx * pxToWorld);
-    // 見出しの 1 行目を横切る位置では紙の下をくぐるように、縫い目の間隔を少しだけ調整する。
-    // ほどけ始め（t = Lc）では必ず紙の上に出ている。
-    const firstLine = hero.querySelector('[data-gl-text]');
-    if (firstLine && Math.abs(dir.y) > 1e-3) {
-      const c = centerOf(firstLine, box);
-      const t1 = (toWorld(c.x, c.y).y - S.y) / dir.y;
-      if (t1 > 0 && t1 < lc) {
-        const m = Math.max(1, Math.round((omega * (lc - t1) + Math.PI) / (Math.PI * 2)));
-        omega = (Math.PI * 2 * m - Math.PI) / (lc - t1);
-      }
-    }
+    // ほどけ始め（t = Lc）では cos(0) = 1 なので、紐は必ず紙の上に出ている
+    const omega = (Math.PI * 2) / (lambdaPx * pxToWorld);
 
     cord.s.copy(S);
     cord.u.copy(dir);
@@ -266,18 +240,6 @@ export function mount(hero: HTMLElement, canvas: HTMLCanvasElement): () => void 
     }
     paperUniforms.uHoleCount.value = count;
     paperUniforms.uHoleR.value = R / pxToWorld;
-    textDirty = true;
-  };
-
-  const refreshText = () => {
-    const buffer = renderer.getDrawingBufferSize(new Vector2());
-    if (drawText(hero, canvas, textCanvas, buffer.x, buffer.y)) {
-      textTexture.dispose();
-      textTexture.image = textCanvas;
-      textTexture.needsUpdate = true;
-      paperUniforms.uHasText.value = 1;
-    }
-    textDirty = false;
   };
 
   // ---- 入力 ----
@@ -309,34 +271,20 @@ export function mount(hero: HTMLElement, canvas: HTMLCanvasElement): () => void 
   window.addEventListener('pointermove', onPointerMove, { passive: true });
   document.documentElement.addEventListener('pointerleave', onPointerLeave);
 
-  let scrollProgress = 0;
-  const readScroll = () => {
-    const r = hero.getBoundingClientRect();
-    scrollProgress = Math.min(Math.max(-r.top / Math.max(r.height, 1), 0), 1);
-  };
-  window.addEventListener('scroll', readScroll, { passive: true });
-  readScroll();
-
   // ---- 描画 ----
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const startedAt = performance.now();
   const easeInOut = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
-  let roll = 0;
-  let pointerOn = 0;
   let ready = false;
 
   const frame = () => {
-    if (textDirty && fontsLoaded) refreshText();
     const now = performance.now();
     const t = (now - startedAt) / 1000;
     const still = reduceMotion.matches;
 
     paperUniforms.uReveal.value = still ? 1.02 : easeInOut(Math.min(t / 2.6, 1)) * 1.02;
-    shared.uTime.value = still ? 0 : t;
-
-    const targetRoll = (still ? 0 : 0.5 * Math.sin(t * 0.45)) + scrollProgress * 2.6;
-    roll += (targetRoll - roll) * 0.08;
-    shared.uRoll.value = roll;
+    // 指で紙縒りを転がすような、ゆっくりした撚れ
+    shared.uRoll.value = still ? 0 : 0.5 * Math.sin(t * 0.45);
 
     if (!still) {
       pluck.vel += (pluck.target - pluck.amp) * 0.09;
@@ -348,12 +296,8 @@ export function mount(hero: HTMLElement, canvas: HTMLCanvasElement): () => void 
       shared.uPluckAmp.value = 0;
     }
 
-    pointerOn += ((pointer.inside && !still ? 1 : 0) - pointerOn) * 0.08;
-    paperUniforms.uPointerOn.value = pointerOn;
-    paperUniforms.uPointer.value.set(pointer.x, view.height - pointer.y);
-
     renderer.render(scene, camera);
-    if (!ready && paperUniforms.uHasText.value > 0) {
+    if (!ready) {
       ready = true;
       canvas.dataset.ready = 'true';
       hero.dataset.gl = 'ready';
@@ -405,30 +349,20 @@ export function mount(hero: HTMLElement, canvas: HTMLCanvasElement): () => void 
   canvas.addEventListener('webglcontextlost', onContextLost);
 
   layout();
-  let disposed = false;
-  loadFonts(hero).then(() => {
-    if (disposed) return;
-    fontsLoaded = true;
-    textDirty = true;
-    applyLoop();
-    if (!running) frame();
-  });
+  applyLoop();
 
   return () => {
-    disposed = true;
     renderer.setAnimationLoop(null);
     io.disconnect();
     resizeObserver.disconnect();
     reduceMotion.removeEventListener('change', applyLoop);
     window.removeEventListener('pointermove', onPointerMove);
     document.documentElement.removeEventListener('pointerleave', onPointerLeave);
-    window.removeEventListener('scroll', readScroll);
     canvas.removeEventListener('webglcontextlost', onContextLost);
     strands.forEach((strand) => strand.materials.forEach((material) => material.dispose()));
     stripGeometry.dispose();
     paperGeometry.dispose();
     paperMaterial.dispose();
-    textTexture.dispose();
     renderer.dispose();
     delete hero.dataset.gl;
     delete canvas.dataset.ready;

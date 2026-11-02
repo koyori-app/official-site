@@ -6,20 +6,14 @@ import type { ProductStatus } from '../data/products';
 interface Props {
   status: ProductStatus;
   lang: Locale;
-  /** inherit は周りの文字色をそのまま使う（色つきの短冊の上など） */
-  tone?: 'default' | 'inherit';
   class?: string;
 }
-const { status, lang, tone = 'default', class: className = '' } = Astro.props;
+const { status, lang, class: className = '' } = Astro.props;
 const tr = t(lang);
 ---
 
 <span
-  class:list={[
-    'status inline-flex items-center gap-2 whitespace-nowrap font-mono text-xs tracking-[0.1em] uppercase',
-    tone === 'default' && 'text-ink-3',
-    className,
-  ]}
+  class:list={['status inline-flex items-center gap-2 whitespace-nowrap', className]}
   data-status={status}
 >
   <span class="status-mark" aria-hidden="true"></span>

@@ -17,6 +17,9 @@ importers:
       '@fontsource-variable/fraunces':
         specifier: 5.3.0
         version: 5.3.0
+      '@fontsource-variable/instrument-sans':
+        specifier: 5.3.0
+        version: 5.3.0
       '@fontsource-variable/jetbrains-mono':
         specifier: 5.3.0
         version: 5.3.0
@@ -26,9 +29,6 @@ importers:
       '@fontsource-variable/noto-serif-jp':
         specifier: 5.3.1
         version: 5.3.1
-      '@fontsource-variable/space-grotesk':
-        specifier: 5.3.0
-        version: 5.3.0
       '@tailwindcss/vite':
         specifier: 4.3.3
         version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(jiti@2.7.0)(yaml@2.9.1))
@@ -321,6 +321,9 @@ packages:
   '@fontsource-variable/fraunces@5.3.0':
     resolution: {integrity: sha512-9BYGySn4AHEJdgp9Z28tQ3X+laJMEOITXkQarZXeloWQZDq5oOvXJ3kDA8c7MGIfpogIaZfjrQBqmda8POOCKA==}
 
+  '@fontsource-variable/instrument-sans@5.3.0':
+    resolution: {integrity: sha512-u4gKbDBTNFGkg997tfQn3eHOhHuquWUFTRT/rwzuKtrxX5P2ekfs2x+LgBPP4P32+cC+vUwF1Cr+IdRoPQbrGw==}
+
   '@fontsource-variable/jetbrains-mono@5.3.0':
     resolution: {integrity: sha512-F32xpS2NsGYoQi2ADSkKTgpJj7ozajsGgDJ8woTnqjmIB+dxDIqImjl4pXZVEExu8UFZ2ndhmX18EBS/hdz3Lw==}
 
@@ -329,9 +332,6 @@ packages:
 
   '@fontsource-variable/noto-serif-jp@5.3.1':
     resolution: {integrity: sha512-quU5uIezSqZFgPaDDI2C3hQfIJHzyXVYuvMZsDDF++og8yechsAwcmCkLLdofPboUB1xHOWV3xohJyIVBi3b4g==}
-
-  '@fontsource-variable/space-grotesk@5.3.0':
-    resolution: {integrity: sha512-2IxmvfB08i9vnGB3Ym/AXvhRE+8XOjWMXIyDum03c+tPwH0FUoMNQfGpU8NXPxjbws0Vvss3AH0Zqt4oJBBAdw==}
 
   '@img/colour@1.1.0':
     resolution: {integrity: sha512-Td76q7j57o/tLVdgS746cYARfSyxk8iEfRxewL9h4OMzYhbW4TAcppl0mT4eyqXddh6L/jwoM75mo7ixa/pCeQ==}
@@ -2227,13 +2227,13 @@ snapshots:
 
   '@fontsource-variable/fraunces@5.3.0': {}
 
+  '@fontsource-variable/instrument-sans@5.3.0': {}
+
   '@fontsource-variable/jetbrains-mono@5.3.0': {}
 
   '@fontsource-variable/noto-sans-jp@5.3.1': {}
 
   '@fontsource-variable/noto-serif-jp@5.3.1': {}
-
-  '@fontsource-variable/space-grotesk@5.3.0': {}
 
   '@img/colour@1.1.0':
     optional: true

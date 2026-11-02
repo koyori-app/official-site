@@ -3,6 +3,7 @@ import type { Locale } from '../i18n/ui';
 import { formatDate, isoDate, localePath, t } from '../i18n/utils';
 import { getNews, newsSlug } from '../lib/news';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
 
 interface Props {
   lang: Locale;
@@ -14,48 +15,27 @@ const display = lang === 'ja' ? 'display-ja' : 'display';
 ---
 
 <BaseLayout lang={lang} title={tr('news.title')} description={tr('news.pageDescription')}>
-  <section class="container-site pt-16 pb-12 sm:pt-24">
-    <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-end">
-      <div>
-        <p class="label-mono">
-          <span class="text-sage-ink">—</span> News
-        </p>
-        <h1 class:list={['mt-4 text-[clamp(3.5rem,11vw,9rem)] text-ink', display]}>
-          {tr('news.title')}
-        </h1>
-      </div>
-      <p class="max-w-md text-lg text-ink-2 lg:justify-self-end">{tr('news.lead')}</p>
-    </div>
+  <section class="container-site pt-16 sm:pt-24">
+    <h1 class:list={['page-title text-ink', display]}>{tr('news.title')}</h1>
+    <p class="mt-4 max-w-xl text-lg leading-7 text-ink-2">{tr('news.lead')}</p>
     {news.length === 0 ? (
-      <p class="mt-16 text-ink-2">{tr('news.empty')}</p>
+      <p class="mt-12 text-ink-2">{tr('news.empty')}</p>
     ) : (
-      <ul class="mt-16">
+      <ul class="mt-12">
         {news.map((entry) => (
           <li>
             <a
               href={localePath(lang, `/news/${newsSlug(entry)}`)}
-              class="row-link group grid gap-3 py-9 sm:grid-cols-[12rem_minmax(0,1fr)_auto] sm:gap-10"
+              class="row-link grid gap-2 py-6 sm:grid-cols-[12rem_minmax(0,1fr)_auto] sm:gap-8 sm:px-2"
             >
-              <time datetime={isoDate(entry.data.date)} class="label-mono pt-2">
+              <time datetime={isoDate(entry.data.date)} class="meta sm:pt-1">
                 {formatDate(entry.data.date, lang)}
               </time>
               <div>
-                <h2
-                  class:list={[
-                    'text-2xl text-ink sm:text-[2rem]',
-                    lang === 'ja' ? 'display-ja' : 'font-serif leading-tight',
-                  ]}
-                >
-                  {entry.data.title}
-                </h2>
-                <p class="mt-3 max-w-2xl text-ink-2">{entry.data.description}</p>
+                <h2 class="text-xl leading-8 font-medium text-ink">{entry.data.title}</h2>
+                <p class="mt-1 max-w-2xl text-ink-2">{entry.data.description}</p>
               </div>
-              <span
-                class="hidden pt-2 font-mono text-ink-3 transition-transform duration-300 ease-soft group-hover:translate-x-1 sm:block"
-                aria-hidden="true"
-              >
-                →
-              </span>
+              <Icon name="arrow-right" class="hidden h-4 w-4 self-center text-ink-3 sm:block" />
             </a>
           </li>
         ))}

@@ -36,7 +36,6 @@ uniform float uR;          // 紙縒りの半径
 uniform float uK;          // 撚りの強さ（rad / world）
 uniform float uRoll;       // 指で転がすような撚りの揺れ
 uniform float uSJ;         // メッシュ上でほどけ始める位置（0..1）
-uniform float uTime;
 uniform vec3 uP1;          // ほどけた糸のベジエ制御点
 uniform vec3 uP2;
 uniform vec3 uP3;
@@ -67,8 +66,7 @@ vec3 axisAt(float t) {
   vec2 n = vec2(-uU.y, uU.x);
   float d = (t - uPluckT) / uPluckSigma;
   float bump = uPluckAmp * exp(-d * d) * stitch;
-  float sway = uR * 0.12 * sin(uTime * 0.9 + t * 1.7) * stitch;
-  return vec3(uS + uU * t + n * (bump + sway), uA * (c - 0.22));
+  return vec3(uS + uU * t + n * bump, uA * (c - 0.22));
 }
 
 void frameAt(float t, out vec3 B1, out vec3 B2) {
@@ -114,9 +112,8 @@ vec3 strandPoint(float sb, float v, out vec3 center) {
   float hw0 = halfWidthAt(1.0);
   float w0 = 2.0 * hw0 * uR * 1.35;
   vec3 p1 = uP1;
-  vec3 p2 = uP2 + vec3(sin(uTime * 0.6 + uI * 1.7) * uR * 0.5, 0.0, 0.0);
-  center = bez(root, p1, p2, uP3, sb);
-  vec3 T = normalize(bez(root, p1, p2, uP3, sb + 0.002) - bez(root, p1, p2, uP3, sb - 0.002));
+  center = bez(root, p1, uP2, uP3, sb);
+  vec3 T = normalize(bez(root, p1, uP2, uP3, sb + 0.002) - bez(root, p1, uP2, uP3, sb - 0.002));
   vec3 N1 = normalize(cross(T, vec3(0.0, 0.0, 1.0)));
   vec3 N2 = cross(N1, T);
   float psi0 = thetaAt(uLc) + HALF_PI;
@@ -242,33 +239,17 @@ void main() {
 export const paperFragment = /* glsl */ `
 precision highp float;
 
-uniform sampler2D uText;
-uniform float uHasText;
-uniform vec2 uRes;      // 描画バッファの大きさ
 uniform float uDpr;
 uniform vec3 uPaper;
-uniform vec2 uPointer;  // CSS px、左下原点
-uniform float uPointerOn;
 uniform vec4 uHoles[16]; // x, y（CSS px、左下原点）, 角度, 現れる位置（メッシュの s）
 uniform float uHoleCount;
 uniform float uHoleR;
 uniform float uReveal;
 
-${noise}
-
 void main() {
   vec2 px = gl_FragCoord.xy / uDpr;
-  float h = vnoise(px * 0.02) * 0.55 + vnoise(px * vec2(0.005, 0.06)) * 0.45;
-  vec3 col = uPaper * (0.988 + 0.024 * h);
-
-  // ポインターの近くだけ、紙の凹凸を斜めの光で浮かせる
-  vec3 Nn = normalize(vec3(-dFdx(h) * 6.0 * uDpr, -dFdy(h) * 6.0 * uDpr, 1.0));
-  vec2 d = uPointer - px;
-  float fall = exp(-dot(d, d) / (2.0 * 200.0 * 200.0)) * uPointerOn;
-  vec3 L = normalize(vec3(d, 90.0));
-  col *= 1.0 + fall * (0.03 + (dot(Nn, L) - 0.7) * 0.18);
-
-  // 紙縒りが紙を通る穴
+  // 紙はページの地と同じ色のまま。紙縒りが紙を通る穴のまわりだけ、わずかに沈ませる
+  vec3 col = uPaper;
   for (int k = 0; k < 16; k++) {
     if (float(k) >= uHoleCount) break;
     vec4 hk = uHoles[k];
@@ -279,11 +260,6 @@ void main() {
     vec2 r = vec2(ca * q.x + sa * q.y, -sa * q.x + ca * q.y);
     float e = length(r / vec2(uHoleR * 1.7, uHoleR * 1.25));
     col *= 1.0 - 0.2 * (1.0 - smoothstep(0.45, 1.0, e));
-  }
-
-  if (uHasText > 0.5) {
-    vec4 ink = texture2D(uText, gl_FragCoord.xy / uRes);
-    col = mix(col, ink.rgb, ink.a * (0.94 + 0.06 * h));
   }
   gl_FragColor = vec4(col, 1.0);
 }

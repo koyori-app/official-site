@@ -1,72 +1,45 @@
 ---
 import type { Locale } from '../i18n/ui';
-import { localePath, t } from '../i18n/utils';
+import { localePath } from '../i18n/utils';
 import type { Product } from '../data/products';
-import ProductGlyph from './ProductGlyph.astro';
+import StrandMark from './StrandMark.astro';
+import StatusBadge from './StatusBadge.astro';
 
 interface Props {
   product: Product;
   lang: Locale;
+  headingLevel?: 2 | 3;
 }
-const { product, lang } = Astro.props;
-const tr = t(lang);
-const href = localePath(lang, `/products/${product.slug}`);
+const { product, lang, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
 ---
 
-<a href={href} class="strip group" style={`--strand: ${product.strand.color};`}>
-  <span class="strip-band" aria-hidden="true"></span>
-  <span class="flex items-start justify-between gap-4">
-    <span>
-      <span class="block font-mono text-[0.6875rem] tracking-[0.14em] text-ink-3 uppercase">
-        Koyori
-      </span>
-      <span class="block font-serif text-4xl leading-none tracking-tight text-ink italic">
-        {product.name.replace('Koyori ', '')}
-      </span>
-    </span>
-    <ProductGlyph
-      slug={product.slug}
-      class="h-12 w-12 text-ink transition-transform duration-500 ease-soft group-hover:-rotate-6"
-    />
-  </span>
-  <span class="mt-4 block flex-1 text-sm text-ink-2">{product.tagline[lang]}</span>
-  <span class="label-mono mt-5 text-ink">
-    {tr('product.detail')} <span aria-hidden="true">→</span>
-  </span>
+<a href={localePath(lang, `/products/${product.slug}`)} class="product-card">
+  <StrandMark color={product.strand.color} />
+  <Heading class="mt-5 text-xl leading-7 font-medium text-ink">{product.name}</Heading>
+  <p class="mt-2 text-ink-2">{product.tagline[lang]}</p>
+  <p class="meta mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 pt-6">
+    <StatusBadge status={product.status} lang={lang} />
+    <span>{product.license}</span>
+  </p>
 </a>
 
 <style>
-  .strip {
-    position: relative;
+  .product-card {
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 1.4rem 1.4rem 1.25rem 1.9rem;
+    padding: 1.5rem;
     background-color: var(--koyori-paper-3);
-    box-shadow: 0 0 0 1px var(--koyori-line);
+    border: 1px solid var(--koyori-line);
+    border-radius: 8px;
     text-decoration: none;
-    transition:
-      transform 400ms var(--koyori-ease),
-      box-shadow 400ms var(--koyori-ease);
-  }
-  .strip-band {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 0.55rem;
-    background-color: var(--strand);
-    transition: width 400ms var(--koyori-ease);
+    line-height: 1.625rem;
+    transition: border-color 150ms var(--koyori-ease);
   }
   @media (hover: hover) and (pointer: fine) {
-    .strip:hover {
-      transform: translateY(-3px);
-      box-shadow:
-        0 0 0 1px var(--koyori-line-strong),
-        0 18px 30px -22px rgba(24, 22, 29, 0.5);
-    }
-    .strip:hover .strip-band {
-      width: 0.9rem;
+    .product-card:hover {
+      border-color: var(--koyori-line-strong);
     }
   }
 </style>

@@ -4,6 +4,7 @@ import type { Locale } from '../i18n/ui';
 import { formatDate, isoDate, localePath, t } from '../i18n/utils';
 import { findTranslations, newsSlug, type NewsEntry } from '../lib/news';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
 
 interface Props {
   lang: Locale;
@@ -29,64 +30,46 @@ for (const other of translations) {
   alternates={alternates}
   ogType="article"
 >
-  <article class="container-site pt-12 pb-12 sm:pt-20">
+  <article class="container-site pt-12 sm:pt-16">
     <a
       href={localePath(lang, '/news/')}
-      class="label-mono inline-flex min-h-10 items-center gap-2 hover:text-ink hover:underline"
+      class="inline-flex min-h-10 items-center gap-1 text-sm text-ink-2 transition-colors duration-150 hover:text-ink"
     >
-      <span aria-hidden="true">←</span>
+      <Icon name="arrow-left" />
       {tr('news.back')}
     </a>
-    <div class="mt-10 grid gap-10 lg:grid-cols-[13rem_minmax(0,46rem)] lg:gap-16">
-      <aside class="lg:pt-3">
-        <div class="flex flex-wrap items-center gap-x-6 gap-y-3 lg:flex-col lg:items-start">
-          <time datetime={isoDate(entry.data.date)} class="label-mono text-ink">
-            {formatDate(entry.data.date, lang)}
-          </time>
-          {translations.map((other) => (
-            <a
-              href={alternates[other.data.lang]}
-              hreflang={other.data.lang}
-              lang={other.data.lang}
-              class="label-mono inline-flex min-h-9 items-center text-lav-ink underline underline-offset-4"
-            >
-              {tr('news.alt')}
-            </a>
-          ))}
-        </div>
-        <span class="post-thread thread mt-6 hidden lg:block" aria-hidden="true"></span>
+    <div class="mt-8 grid gap-8 lg:grid-cols-[12rem_minmax(0,44rem)] lg:gap-16">
+      <aside class="flex flex-wrap items-center gap-x-6 gap-y-1 lg:flex-col lg:items-start lg:pt-4">
+        <time datetime={isoDate(entry.data.date)} class="meta">
+          {formatDate(entry.data.date, lang)}
+        </time>
+        {translations.map((other) => (
+          <a
+            href={alternates[other.data.lang]}
+            hreflang={other.data.lang}
+            lang={other.data.lang}
+            class="link inline-flex min-h-10 items-center text-sm"
+          >
+            {tr('news.alt')}
+          </a>
+        ))}
       </aside>
       <div>
         <header>
           <h1
             class:list={[
-              'text-[clamp(2.2rem,5.5vw,4rem)] text-ink',
+              'text-[clamp(2rem,1.4rem+1.8vw,2.75rem)] text-ink',
               lang === 'ja' ? 'display-ja' : 'display',
             ]}
           >
             {entry.data.title}
           </h1>
-          <p
-            class:list={[
-              'mt-6 text-lg text-ink-2 sm:text-xl',
-              lang === 'ja' ? 'font-mincho' : 'font-serif',
-            ]}
-          >
-            {entry.data.description}
-          </p>
+          <p class="mt-4 text-lg leading-8 text-ink-2">{entry.data.description}</p>
         </header>
-        <div class="prose mt-12 border-t border-ink pt-10 text-ink-2">
+        <div class="prose mt-10 border-t border-line-strong pt-8 text-ink-2">
           <Content />
         </div>
       </div>
     </div>
   </article>
 </BaseLayout>
-
-<style>
-  .post-thread {
-    --strand: var(--koyori-lav);
-    width: 3px;
-    height: 12rem;
-  }
-</style>

@@ -2,6 +2,7 @@
 import type { Locale } from '../../i18n/ui';
 import { localePath, t } from '../../i18n/utils';
 import { githubOrg, products } from '../../data/products';
+import Icon from '../Icon.astro';
 
 interface Props {
   lang: Locale;
@@ -19,97 +20,111 @@ const strands = JSON.stringify(products.map((p) => p.strand.color));
 >
   <div class="absolute inset-0 -z-10" aria-hidden="true">
     <canvas class="hero-canvas block h-full w-full"></canvas>
+    <!-- WebGL が使えないときの紐。デスクトップとスマートフォンで構図が違うので 2 枚 -->
     <svg
-      class="hero-fallback absolute inset-0 h-full w-full"
+      class="hero-fallback hero-fallback-wide absolute inset-0 h-full w-full"
       viewBox="0 0 1000 600"
       preserveAspectRatio="none"
       focusable="false"
     >
-      <path
-        d="M-40 150 C 200 210 420 260 760 380"
-        fill="none"
-        stroke="var(--koyori-lav)"
-        stroke-width="22"
-        stroke-linecap="round"
-      ></path>
-      <path
-        d="M-40 150 C 200 210 420 260 760 380"
-        fill="none"
-        stroke="var(--koyori-sage-deep)"
-        stroke-width="22"
-        stroke-dasharray="10 14"
-      ></path>
-      {products.map((p, i) => (
+      <g fill="none">
         <path
-          d={`M760 380 C 900 430 ${125 + i * 250} 480 ${125 + i * 250} 620`}
-          fill="none"
-          stroke={p.strand.color}
-          stroke-width="4"
-        />
-      ))}
+          d="M1080 24 C 900 180 760 300 600 444"
+          stroke="var(--koyori-lav)"
+          stroke-width="22"
+          stroke-linecap="round"
+          vector-effect="non-scaling-stroke"
+        ></path>
+        <path
+          d="M1080 24 C 900 180 760 300 600 444"
+          stroke="var(--koyori-sage-deep)"
+          stroke-width="22"
+          stroke-dasharray="10 14"
+          vector-effect="non-scaling-stroke"
+        ></path>
+        {products.map((p, i) => (
+          <path
+            d={`M600 444 C 520 520 ${55 + i * 240} 520 ${55 + i * 240} 620`}
+            stroke={p.strand.color}
+            stroke-width="4"
+            vector-effect="non-scaling-stroke"
+          />
+        ))}
+      </g>
+    </svg>
+    <svg
+      class="hero-fallback hero-fallback-narrow absolute inset-0 h-full w-full"
+      viewBox="0 0 390 780"
+      preserveAspectRatio="none"
+      focusable="false"
+    >
+      <g fill="none">
+        <path
+          d="M440 470 C 300 560 160 640 44 700"
+          stroke="var(--koyori-lav)"
+          stroke-width="16"
+          stroke-linecap="round"
+          vector-effect="non-scaling-stroke"
+        ></path>
+        <path
+          d="M440 470 C 300 560 160 640 44 700"
+          stroke="var(--koyori-sage-deep)"
+          stroke-width="16"
+          stroke-dasharray="8 10"
+          vector-effect="non-scaling-stroke"
+        ></path>
+        {products.map((p, i) => (
+          <path
+            d={`M44 700 C 44 730 ${44 + i * 8} 740 ${44 + i * 8} 800`}
+            stroke={p.strand.color}
+            stroke-width="3"
+            vector-effect="non-scaling-stroke"
+          />
+        ))}
+      </g>
     </svg>
   </div>
 
-  <div class="hero-grid container-site">
-    <p class="hero-eyebrow label-mono">
-      <span class="text-ink">Koyori</span> — {tr('hero.eyebrow')}
-    </p>
-
-    <p class="hero-word" lang="ja">
-      <span class="hero-word-kanji">{tr('hero.word')}</span>
-      <span class="hero-word-reading label-mono" lang="en">
-        {tr('hero.reading')}
-      </span>
-      <span class="hero-word-meaning" lang={lang}>
-        {tr('hero.meaning')}
-      </span>
-    </p>
-
-    <div class="hero-title-wrap">
-      <span class="anchor anchor-start" data-gl-anchor="start"></span>
-      <span class="anchor anchor-split" data-gl-anchor="split"></span>
-      <h1 id="hero-title" class:list={['hero-title', `hero-title-${lang}`]}>
-        <span class="hero-line">
-          <span data-gl-text>{tr('hero.title.1')}</span>
-        </span>
-        <span class="hero-line hero-line-2">
-          <span data-gl-text>{tr('hero.title.2')}</span>
-        </span>
+  <div class="hero-body container-site">
+    <div class="hero-text">
+      <h1 id="hero-title" class:list={['hero-title', lang === 'ja' ? 'display-ja' : 'display']}>
+        <span class="block">{tr('hero.title.1')}</span>
+        <span class="block">{tr('hero.title.2')}</span>
       </h1>
-    </div>
-
-    <div class="hero-lead">
-      <p class="text-ink-2">{tr('hero.lead')}</p>
-      <div class="mt-7 flex flex-wrap gap-3">
+      <p class="hero-lead">{tr('hero.lead')}</p>
+      <div class="mt-10 flex flex-wrap gap-3">
         <a href={localePath(lang, '/products/')} class="btn btn-primary">
           {tr('hero.cta.products')}
-          <span aria-hidden="true">→</span>
+          <Icon name="arrow-right" />
         </a>
-        <a href={githubOrg} rel="noopener" class="btn btn-ghost">
+        <a href={githubOrg} rel="noopener" class="btn btn-secondary">
           {tr('hero.cta.github')}
-          <span aria-hidden="true">↗</span>
+          <Icon name="arrow-up-right" />
         </a>
       </div>
     </div>
-
-    <ol class="hero-exits" aria-label={tr('products.title')}>
-      {products.map((product, i) => (
-        <li class="hero-exit">
-          <span class="exit-anchor" data-gl-exit />
-          <a href={localePath(lang, `/products/${product.slug}`)} class="hero-exit-link">
-            <span class="text-ink-3">{String(i + 1).padStart(2, '0')}</span>
-            <span class="text-ink">{product.name.replace('Koyori ', '')}</span>
-          </a>
-        </li>
-      ))}
-    </ol>
   </div>
 
-  <span class="mobile-exits" aria-hidden="true">
+  <!-- 紐の舞台。デスクトップではヒーロー全体、スマートフォンでは本文の下の帯 -->
+  <div class="hero-stage">
+    <span class="anchor anchor-start" data-gl-anchor="start"></span>
+    <span class="anchor anchor-split" data-gl-anchor="split"></span>
+    <p class="hero-caption">
+      <span class="hero-caption-word" lang="ja">
+        {tr('hero.word')}
+      </span>
+      <span class="text-ink-3" lang={lang === 'ja' ? 'ja' : 'en'}>
+        {tr('hero.reading')}
+      </span>
+      <span class="hero-caption-meaning">{tr('hero.meaning')}</span>
+    </p>
+  </div>
+
+  <div class="hero-exits container-site" aria-hidden="true">
     {products.map((_, i) => (
-      <span class="mobile-exit" style={`--i: ${i}`} data-gl-exit />
+      <span class="hero-exit" style={`--i: ${i}`} data-gl-exit />
     ))}
-  </span>
+  </div>
 </section>
 
 <script>
@@ -145,238 +160,156 @@ const strands = JSON.stringify(products.map((p) => p.strand.color));
 
 <style>
   .hero {
-    --mobile-spine: calc(var(--gutter) * 0.5);
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100svh - 4rem);
     background-color: var(--koyori-paper);
   }
 
   .hero-fallback {
     display: none;
   }
-  :global(html:not(.js)) .hero-fallback,
-  .hero[data-gl='fallback'] .hero-fallback {
+  :global(html:not(.js)) .hero-fallback-narrow,
+  .hero[data-gl='fallback'] .hero-fallback-narrow {
     display: block;
   }
 
-  .hero-grid {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    min-height: calc(100svh - 4rem);
-    padding-top: 1.5rem;
-    padding-bottom: 2.5rem;
-    row-gap: 1.5rem;
-    align-content: start;
+  .hero-body {
+    padding-top: 3rem;
   }
-
-  .hero-eyebrow {
-    max-width: 24rem;
+  .hero-text {
+    max-width: 40rem;
   }
-
-  /* 辞書の見出し語のような「紙縒り」 */
-  .hero-word {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    column-gap: 0.9rem;
-    align-items: baseline;
-    max-width: 20rem;
+  .hero-title {
+    color: var(--koyori-ink);
+    font-size: clamp(2.125rem, 1.2rem + 4.2vw, 4rem);
   }
-  .hero-word-kanji {
-    font-family: var(--font-mincho);
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    line-height: 1.2;
+  .hero-title.display {
+    font-size: clamp(2.5rem, 1.4rem + 4.4vw, 4.5rem);
+    letter-spacing: -0.03em;
+    line-height: 1.04;
   }
-  .hero-word-reading {
-    color: var(--koyori-lav-ink);
-  }
-  .hero-word-meaning {
-    grid-column: 1 / -1;
-    margin-top: 0.35rem;
-    font-size: 0.8125rem;
-    line-height: 1.7;
+  .hero-lead {
+    margin-top: 1.5rem;
+    max-width: 36rem;
+    font-size: 1.125rem;
+    line-height: 1.875rem;
     color: var(--koyori-ink-2);
   }
 
-  .hero-title-wrap {
+  /* スマートフォン: 本文の下の帯を、右の外から左下へ紐が渡り、左端でほどけて下へ降りる */
+  .hero-stage {
     position: relative;
-    margin-top: 2.5rem;
+    flex: 1;
+    min-height: 17rem;
   }
-  .hero-title {
-    --gl-ink: var(--koyori-ink);
-    color: var(--gl-ink);
-    font-family: var(--font-serif);
-    font-weight: 440;
-    line-height: 1.12;
-    letter-spacing: -0.02em;
-    font-feature-settings: normal;
-  }
-  .hero-title-ja {
-    font-family: var(--font-mincho);
-    font-weight: 560;
-    letter-spacing: 0.02em;
-    font-size: clamp(2.5rem, 11.4vw, 9rem);
-  }
-  .hero-title-en {
-    font-size: clamp(2.6rem, 11.2vw, 8.6rem);
-    letter-spacing: -0.035em;
-  }
-  .hero-line {
-    display: block;
-    white-space: nowrap;
-  }
-  .hero-line > span {
-    display: inline-block;
-  }
-  .hero-line-2 {
-    --gl-ink: var(--koyori-lav-ink);
-    padding-left: 0.55em;
-  }
-  .hero-title-en .hero-line-2 {
-    font-style: italic;
-    padding-left: 0.6em;
-  }
-  .hero[data-gl='ready'] [data-gl-text] {
-    color: transparent;
-  }
-
   .anchor {
     position: absolute;
     width: 1px;
     height: 1px;
     pointer-events: none;
   }
-  /* スマートフォン: 右上から入り、見出しを斜めに横切って左の余白へ降りる */
   .anchor-start {
-    right: calc(-1 * var(--gutter) - 22vw);
-    top: 8%;
+    left: 116%;
+    top: 22%;
   }
   .anchor-split {
-    left: calc(var(--mobile-spine) - var(--gutter) + 12px);
-    top: calc(100% + 2.5rem);
+    left: calc(var(--gutter) + 0.75rem);
+    top: 86%;
   }
-
-  .hero-lead {
-    position: relative;
-    padding-left: 2.6rem;
-    margin-top: 2.5rem;
+  .hero-caption {
+    position: absolute;
+    left: var(--gutter);
+    top: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.75rem;
+    max-width: 15rem;
+    font-size: 0.8125rem;
+    line-height: 1.25rem;
+    color: var(--koyori-ink-2);
   }
-  .hero-lead p {
-    max-width: 32rem;
-    font-size: 1rem;
-    line-height: 1.9;
+  .hero-caption-word {
+    font-family: var(--font-mincho);
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    color: var(--koyori-ink);
+  }
+  .hero-caption-meaning {
+    flex-basis: 100%;
   }
 
   .hero-exits {
-    display: none;
-  }
-  .mobile-exits {
     position: absolute;
     left: 0;
+    right: 0;
     bottom: 0;
+    margin-inline: auto;
+    height: 1px;
   }
-  .mobile-exit {
+  .hero-exit {
     position: absolute;
     bottom: 0;
-    left: calc(var(--mobile-spine) + var(--i) * 7px);
+    left: calc(var(--gutter) + 0.75rem + var(--i) * 0.5rem);
     width: 1px;
     height: 1px;
   }
 
   @media (width >= 48rem) {
-    .hero-grid {
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-      column-gap: 2rem;
-      grid-template-rows: auto auto auto 1fr auto;
-      padding-top: 2rem;
-      padding-bottom: 0;
-      row-gap: 0;
+    /* デスクトップ: 見出しは左の静かな紙の上。紐は右上の外から入り、右寄りで紙を縫って、
+       中央の下でほどけ、4 本がそれぞれプロダクトの列へ降りる */
+    :global(html:not(.js)) .hero-fallback-narrow,
+    .hero[data-gl='fallback'] .hero-fallback-narrow {
+      display: none;
     }
-    .hero-eyebrow {
-      grid-column: 1 / 7;
-      grid-row: 1;
+    :global(html:not(.js)) .hero-fallback-wide,
+    .hero[data-gl='fallback'] .hero-fallback-wide {
+      display: block;
     }
-    .hero-word {
-      grid-column: 9 / 13;
-      grid-row: 1;
-      justify-self: end;
+    .hero-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding-top: 4rem;
+      padding-bottom: 10rem;
     }
-    .hero-title-wrap {
-      grid-column: 1 / -1;
-      grid-row: 2;
-      margin-top: clamp(1rem, 5vh, 3.5rem);
+    .hero-text {
+      width: 58%;
+      max-width: 46rem;
     }
-    .hero-title-ja {
-      font-size: clamp(3rem, 8.6vw, 8.75rem);
+    .hero-stage {
+      position: absolute;
+      inset: 0;
+      min-height: 0;
+      pointer-events: none;
     }
-    .hero-title-en {
-      font-size: clamp(3rem, 8.4vw, 8.5rem);
-    }
-    .hero-line-2 {
-      padding-left: 1.35em;
-    }
-    .hero-title-en .hero-line-2 {
-      padding-left: 1.1em;
-    }
-    /* デスクトップ: 左の外から入り、見出しを右下へ縫って、右寄りでほどける */
     .anchor-start {
-      left: calc(-1 * var(--gutter) - 12vw);
-      right: auto;
-      top: -22%;
+      left: 108%;
+      top: 4%;
     }
     .anchor-split {
-      left: 84%;
-      top: calc(100% + 4.5rem);
+      left: 60%;
+      top: 74%;
     }
-    .hero-lead {
-      grid-column: 1 / 7;
-      grid-row: 3;
-      padding-left: 0;
-      margin-top: 2rem;
+    .hero-caption {
+      left: auto;
+      right: var(--gutter);
+      top: 54%;
+      justify-content: flex-end;
+      text-align: right;
+      pointer-events: auto;
     }
+    /* 出口はプロダクトの 4 列の、糸の印の真上 */
     .hero-exits {
-      grid-column: 1 / -1;
-      grid-row: 5;
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      column-gap: 2rem;
-      padding-top: 2.5rem;
+      column-gap: 1rem;
+      max-width: 84rem;
     }
     .hero-exit {
       position: relative;
-      padding-bottom: 1.25rem;
-    }
-    .exit-anchor {
-      position: absolute;
-      left: 50%;
-      bottom: 0;
-      width: 1px;
-      height: 1px;
-    }
-    .hero-exit-link {
-      display: inline-flex;
-      gap: 0.6rem;
-      margin-left: calc(50% + 1.75rem);
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      text-decoration: none;
-      padding-block: 0.4rem;
-      border-bottom: 1px solid transparent;
-      transition: border-color 200ms var(--koyori-ease);
-    }
-    .hero-exit-link:hover {
-      border-bottom-color: currentColor;
-    }
-    .mobile-exits {
-      display: none;
-    }
-  }
-
-  @media (width >= 64rem) {
-    .hero-lead {
-      grid-column: 1 / 6;
+      left: calc(1.5rem + 0.75rem);
     }
   }
 </style>

@@ -41,19 +41,23 @@ export default function MobileNav({ items, labels }: Props) {
     };
   }, [open]);
 
-  const icon = (path: string) => (
+  // lucide の形。16px ではなく 20px、線幅 1.5
+  const icon = (paths: string[]) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
+      strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
-      className="h-5 w-5"
+      className="h-5 w-5 shrink-0"
     >
-      <path d={path} />
+      {paths.map((d) => (
+        <path key={d} d={d} />
+      ))}
     </svg>
   );
 
@@ -66,9 +70,9 @@ export default function MobileNav({ items, labels }: Props) {
         aria-controls={panelId}
         aria-label={open ? labels.close : labels.open}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-11 w-11 items-center justify-center border border-ink text-ink transition-colors duration-150 hover:bg-ink hover:text-paper-3"
+        className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-line-strong text-ink transition-colors duration-150 hover:bg-paper-2"
       >
-        {icon('M4 7h16M4 12h16M4 17h16')}
+        {icon(['M4 6h16', 'M4 12h16', 'M4 18h16'])}
       </button>
 
       {mounted &&
@@ -82,53 +86,37 @@ export default function MobileNav({ items, labels }: Props) {
             className="fixed inset-0 z-50"
           >
             <div
-              className="absolute inset-0 bg-ink/40"
+              className="absolute inset-0 bg-ink/30"
               onClick={() => setOpen(false)}
               aria-hidden="true"
             />
-            <div className="absolute inset-y-0 right-0 flex w-[min(22rem,88vw)] flex-col bg-paper shadow-2xl">
-              {/* 紙縒りの帯。メニューの左端に沿わせる */}
-              <span
-                aria-hidden="true"
-                className="absolute inset-y-0 left-0 w-1.5"
-                style={{
-                  backgroundImage:
-                    'repeating-linear-gradient(-60deg, #c4b5df 0 6px, #9fc2a9 6px 10px, #6e5c8f 10px 14px, #536d5a 14px 18px)',
-                }}
-              />
+            <div className="absolute inset-y-0 right-0 flex w-[min(22rem,88vw)] flex-col border-l border-line bg-paper">
               <div className="flex h-16 items-center justify-between border-b border-line pr-4 pl-6">
-                <span className="label-mono">{labels.menu}</span>
+                <span className="text-[0.9375rem] text-ink-3">{labels.menu}</span>
                 <button
                   ref={closeRef}
                   type="button"
                   aria-label={labels.close}
                   onClick={() => setOpen(false)}
-                  className="inline-flex h-11 w-11 items-center justify-center text-ink transition-colors duration-150 hover:bg-paper-2"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-md text-ink transition-colors duration-150 hover:bg-paper-2"
                 >
-                  {icon('M6 6l12 12M18 6 6 18')}
+                  {icon(['M18 6 6 18', 'm6 6 12 12'])}
                 </button>
               </div>
-              <nav aria-label={labels.menu} className="flex-1 overflow-y-auto py-4 pr-4 pl-6">
-                <ul className="flex flex-col">
-                  {items.map((item, i) => (
-                    <li key={item.href} className="border-b border-line">
+              <nav aria-label={labels.menu} className="flex-1 overflow-y-auto px-4 py-4">
+                <ul className="flex flex-col gap-1">
+                  {items.map((item) => (
+                    <li key={item.href}>
                       <a
                         href={item.href}
                         aria-current={item.current ? 'page' : undefined}
                         rel={item.external ? 'noopener' : undefined}
-                        className={`flex min-h-16 items-center gap-4 font-serif text-[1.65rem] leading-tight transition-colors duration-150 ${
-                          item.current ? 'text-lav-ink italic' : 'text-ink hover:text-lav-ink'
+                        className={`flex min-h-12 items-center gap-2 rounded-md px-2 text-lg transition-colors duration-150 hover:bg-paper-2 ${
+                          item.current ? 'bg-paper-2 font-medium text-ink' : 'text-ink-2'
                         }`}
                       >
-                        <span className="w-7 font-mono text-xs text-ink-3">
-                          {String(i + 1).padStart(2, '0')}
-                        </span>
                         <span className="flex-1">{item.label}</span>
-                        {item.external && (
-                          <span aria-hidden="true" className="font-mono text-base">
-                            ↗
-                          </span>
-                        )}
+                        {item.external && icon(['M7 7h10v10', 'M7 17 17 7'])}
                       </a>
                     </li>
                   ))}

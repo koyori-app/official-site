@@ -4,6 +4,7 @@ import { localePath, stripLocale, t } from '../i18n/utils';
 import { githubOrg } from '../data/products';
 import LogoMark from './LogoMark.astro';
 import LocaleSwitch from './LocaleSwitch.astro';
+import Icon from './Icon.astro';
 import MobileNav from './react/MobileNav';
 
 interface Props {
@@ -36,33 +37,30 @@ const mobileItems = [
 ];
 ---
 
-<header class="sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur-md">
+<header class="sticky top-0 z-40 border-b border-line bg-paper/90 backdrop-blur-md">
   <div class="container-site flex h-16 items-center justify-between gap-4">
     <a
       href={localePath(lang, '/')}
-      class="group flex min-h-11 items-center gap-3 text-ink"
+      class="flex min-h-11 items-center gap-2 text-ink"
       aria-label={tr('site.name')}
     >
-      <LogoMark class="h-7 w-7 transition-transform duration-500 ease-soft group-hover:rotate-[-12deg]" />
-      <span class="font-serif text-[1.35rem] leading-none tracking-tight italic">Koyori</span>
+      <LogoMark class="h-7 w-7" />
+      <span class="text-lg leading-none font-medium">Koyori</span>
     </a>
 
     <nav aria-label={tr('nav.primary')} class="hidden md:block">
-      <ul class="flex items-center gap-8">
-        {nav.map((item, i) => (
+      <ul class="flex items-center gap-8 text-[0.9375rem]">
+        {nav.map((item) => (
           <li>
             <a
               href={item.href}
               aria-current={item.current ? 'page' : undefined}
               class:list={[
-                'nav-link inline-flex min-h-10 items-center gap-2 text-sm text-ink',
-                item.current && 'is-current',
+                'nav-link inline-flex min-h-10 items-center transition-colors duration-150',
+                item.current ? 'text-ink' : 'text-ink-2 hover:text-ink',
               ]}
             >
-              <span class="font-mono text-[0.6875rem] text-ink-3">
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <span>{item.label}</span>
+              {item.label}
             </a>
           </li>
         ))}
@@ -70,10 +68,10 @@ const mobileItems = [
           <a
             href={githubOrg}
             rel="noopener"
-            class="nav-link inline-flex min-h-10 items-center gap-1 text-sm text-ink"
+            class="inline-flex min-h-10 items-center gap-1 text-ink-2 transition-colors duration-150 hover:text-ink"
           >
             {tr('nav.github')}
-            <span aria-hidden="true">↗</span>
+            <Icon name="arrow-up-right" />
           </a>
         </li>
       </ul>
@@ -96,26 +94,14 @@ const mobileItems = [
   .nav-link {
     position: relative;
   }
-  /* 現在地と hover に、撚った糸の下線 */
-  .nav-link::after {
+  /* 現在地は墨の細い下線 */
+  .nav-link[aria-current='page']::after {
     content: '';
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 0.35rem;
-    height: 3px;
-    background-image: repeating-linear-gradient(
-      -60deg,
-      var(--koyori-lav) 0 4px,
-      var(--koyori-sage-deep) 4px 6px
-    );
-    transform: scaleX(0);
-    transform-origin: right;
-    transition: transform 360ms var(--koyori-ease);
-  }
-  .nav-link:hover::after,
-  .nav-link.is-current::after {
-    transform: scaleX(1);
-    transform-origin: left;
+    bottom: 0.5rem;
+    height: 1px;
+    background-color: var(--koyori-ink);
   }
 </style>

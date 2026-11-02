@@ -1,0 +1,33 @@
+---
+/**
+ * 糸の印。プロダクトの名前の横にだけ置く、そのプロダクトの色で撚った短い糸。
+ * トップのヒーローでほどけた 4 本の糸と同じ色。
+ */
+interface Props {
+  color: string;
+  class?: string;
+}
+const { color, class: className } = Astro.props;
+---
+
+<span
+  class:list={['strand-mark', className]}
+  style={`--strand: ${color};`}
+  aria-hidden="true"
+></span>
+
+<style>
+  .strand-mark {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 0.25rem;
+    border-radius: 2px;
+    background-color: var(--strand);
+    background-image: repeating-linear-gradient(
+      -60deg,
+      transparent 0 3px,
+      color-mix(in oklab, var(--strand) 70%, #18161d) 3px 5px
+    );
+  }
+</style>

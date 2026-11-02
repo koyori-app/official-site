@@ -3,8 +3,9 @@ import type { Locale } from '../i18n/ui';
 import { localePath, t } from '../i18n/utils';
 import { products } from '../data/products';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import TanzakuList from '../components/TanzakuList.astro';
+import ProductCard from '../components/ProductCard.astro';
 import StatusBadge from '../components/StatusBadge.astro';
+import StrandMark from '../components/StrandMark.astro';
 
 interface Props {
   lang: Locale;
@@ -15,28 +16,26 @@ const display = lang === 'ja' ? 'display-ja' : 'display';
 ---
 
 <BaseLayout lang={lang} title={tr('products.title')} description={tr('products.pageDescription')}>
-  <section class="container-site page-head">
-    <p class="label-mono">
-      <span class="text-sage-ink">—</span> {tr('products.eyebrow')}
-    </p>
-    <h1 class:list={['mt-4 text-[clamp(3.5rem,11vw,9rem)] text-ink', display]}>
-      {tr('products.title')}
-    </h1>
-    <p class="mt-6 max-w-xl text-lg text-ink-2">{tr('products.lead')}</p>
+  <section class="container-site pt-16 sm:pt-24">
+    <h1 class:list={['page-title text-ink', display]}>{tr('products.title')}</h1>
+    <p class="mt-4 max-w-xl text-lg leading-7 text-ink-2">{tr('products.lead')}</p>
+    <ul class="product-grid mt-12">
+      {products.map((product) => (
+        <li>
+          <ProductCard product={product} lang={lang} headingLevel={2} />
+        </li>
+      ))}
+    </ul>
   </section>
 
-  <div class="mt-14">
-    <TanzakuList lang={lang} variant="bar" headingLevel={2} />
-  </div>
-
   <section class="container-site pt-24" aria-labelledby="products-glance">
-    <h2 id="products-glance" class:list={['text-3xl text-ink sm:text-4xl', display]}>
+    <h2 id="products-glance" class:list={['section-title text-ink', display]}>
       {tr('products.glance')}
     </h2>
     <div class="relative mt-8 overflow-x-auto">
       <table class="glance w-full min-w-[40rem] text-left">
         <thead>
-          <tr class="label-mono">
+          <tr>
             <th scope="col">{tr('nav.products')}</th>
             <th scope="col">{tr('product.stack')}</th>
             <th scope="col">{tr('product.license')}</th>
@@ -49,20 +48,16 @@ const display = lang === 'ja' ? 'display-ja' : 'display';
               <th scope="row">
                 <a
                   href={localePath(lang, `/products/${product.slug}`)}
-                  class="inline-flex items-center gap-3 font-serif text-xl text-ink italic underline-offset-4 hover:underline"
+                  class="inline-flex min-h-10 items-center gap-3 font-medium whitespace-nowrap text-ink underline-offset-4 hover:underline"
                 >
-                  <span
-                    class="h-3 w-3 shrink-0"
-                    style={`background:${product.strand.color}`}
-                    aria-hidden="true"
-                  />
+                  <StrandMark color={product.strand.color} />
                   {product.name}
                 </a>
               </th>
-              <td class="font-mono text-xs text-ink-2">{product.stack.join(' · ')}</td>
-              <td class="font-mono text-xs text-ink-2">{product.license}</td>
-              <td>
-                <StatusBadge status={product.status} lang={lang} class="text-ink" />
+              <td class="font-mono text-[0.8125rem] text-ink-2">{product.stack.join(' · ')}</td>
+              <td class="font-mono text-[0.8125rem] text-ink-2">{product.license}</td>
+              <td class="text-sm text-ink-2">
+                <StatusBadge status={product.status} lang={lang} />
               </td>
             </tr>
           ))}
@@ -73,22 +68,16 @@ const display = lang === 'ja' ? 'display-ja' : 'display';
 </BaseLayout>
 
 <style>
-  .page-head {
-    padding-top: 4rem;
-  }
   .glance th,
   .glance td {
-    padding: 1rem 1.25rem 1rem 0;
+    padding: 0.75rem 1.5rem 0.75rem 0;
     border-bottom: 1px solid var(--koyori-line-strong);
     vertical-align: middle;
   }
   .glance thead th {
+    font-size: 0.8125rem;
     font-weight: 400;
-    border-bottom-color: var(--koyori-ink);
-  }
-  @media (width >= 48rem) {
-    .page-head {
-      padding-top: 6rem;
-    }
+    color: var(--koyori-ink-3);
+    padding-block: 0.5rem;
   }
 </style>

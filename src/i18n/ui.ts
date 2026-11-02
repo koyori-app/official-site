@@ -31,21 +31,18 @@ const ja = {
 
   'locale.label': '言語',
 
-  'hero.eyebrow': 'Open source tools for software teams',
   'hero.word': '紙縒り',
-  'hero.reading': 'ko·yo·ri',
-  'hero.meaning': '細く切った紙を撚り合わせてつくる紐。',
-  'hero.title.1': '小さな道具を、',
-  'hero.title.2': '撚り合わせる。',
+  'hero.reading': 'こより',
+  'hero.meaning': '細く切った紙を撚り合わせてつくる紐',
+  'hero.title.1': 'チーム開発の道具を、',
+  'hero.title.2': 'オープンソースで',
   'hero.lead':
-    'Koyori は、タスク管理、ビジュアルリグレッションテスト、UI ライブラリ、ガントチャートのレンダラー。開発チームの日常に寄り添う小さな道具を、オープンソースで作っています。',
+    'タスク管理、ビジュアルリグレッションテスト、Vue と React の UI ライブラリ、ガントチャートのレンダラー。範囲を絞った四つの道具を、すべて GitHub で公開しています。',
   'hero.cta.products': 'プロダクトを見る',
   'hero.cta.github': 'GitHub で見る',
-  'hero.scroll': '糸をたどる',
 
   'products.title': 'プロダクト',
-  'products.eyebrow': '一本の紐、四本の糸',
-  'products.lead': 'それぞれ単独で使え、組み合わせるとつながるツール群です。',
+  'products.lead': 'それぞれ単独で使えて、組み合わせるとつながる四つの道具',
   'products.glance': '一覧で比べる',
   'products.viewAll': 'すべてのプロダクト',
   'products.pageDescription':
@@ -57,15 +54,13 @@ const ja = {
   'product.links': 'リンク',
   'product.repo': 'リポジトリ',
   'product.others': '他のプロダクト',
-  'product.detail': '詳しく見る',
   'product.status': '状態',
   'product.status.development': '開発中',
   'product.status.available': '公開中',
   'product.status.alpha': 'アルファ',
 
   'principles.title': 'つくりかた',
-  'principles.eyebrow': '撚りの向きをそろえる',
-  'principles.lead': '4 つのプロダクトで共通している考え方です。',
+  'principles.lead': '四つのプロダクトに共通する考え方',
   'principles.oss.title': 'すべてオープンソース',
   'principles.oss.body':
     'コードはすべて GitHub の koyori-app オーガニゼーションで公開しています。設計の文書もリポジトリに置き、Issue と Pull Request で開発を進めます。',
@@ -80,15 +75,15 @@ const ja = {
     'バックエンドと計算のコアは Rust、画面は Vue と React で作ります。Arc のように Rust のコアを Wasm にして Web に持ち込む構成も採ります。',
 
   'news.title': 'お知らせ',
-  'news.lead': 'Koyori と各プロダクトの更新情報です。',
+  'news.lead': 'Koyori と各プロダクトの更新情報',
   'news.viewAll': 'すべてのお知らせ',
-  'news.empty': 'お知らせはまだありません。',
+  'news.empty': 'お知らせはまだありません',
   'news.back': 'お知らせ一覧へ',
   'news.alt': 'English version',
   'news.pageDescription': 'Koyori と各プロダクトの更新情報。',
 
   'about.title': 'Koyori について',
-  'about.lead': 'Koyori は、開発チーム向けのオープンソースなプロダクト群のブランドです。',
+  'about.lead': 'Koyori は、開発チーム向けのオープンソースなプロダクト群のブランドです',
   'about.what.title': 'なにをしているか',
   'about.what.body':
     'GitHub の koyori-app オーガニゼーションで、タスク管理の Task、ビジュアルリグレッションテストの VRT、UI ライブラリの Koyori UI、ガントチャートレンダラーの Arc を開発しています。どれも開発チームの日常業務に向けた、範囲を絞った道具です。',
@@ -101,24 +96,24 @@ const ja = {
   'about.pageDescription': 'Koyori の紹介。なにを、どう作っているか、参加の方法。',
 
   'cta.title': '一緒につくりませんか',
-  'cta.title.home': 'あなたの一本も、撚り合わせて。',
+  'cta.title.home': 'Issue と Pull Request を歓迎します',
   'cta.body': 'すべてのコードは GitHub で公開しています。Issue や Pull Request を歓迎します。',
+  'cta.body.home':
+    '四つのプロダクトはどれも、GitHub の koyori-app オーガニゼーションで開発しています',
   'cta.button': 'koyori-app on GitHub',
-  'cta.hint': '糸は引っぱれます',
 
-  'footer.tagline': '開発チームのための、小さなオープンソースの道具。',
+  'footer.tagline': '開発チームのための、小さなオープンソースの道具',
   'footer.meaning':
     '紙縒り（こより）: 細く切った紙を撚り合わせてつくる紐。一本ずつは細くても、撚ると強くなる。',
   'footer.products': 'プロダクト',
   'footer.site': 'サイト',
   'footer.rights': '© 2026 Koyori',
+  'footer.source': 'このサイトのソース',
 
   'notfound.eyebrow': '糸がここで途切れています',
   'notfound.title': 'ページが見つかりません',
-  'notfound.body': 'お探しのページは移動したか、削除された可能性があります。',
+  'notfound.body': 'お探しのページは移動したか、削除された可能性があります',
   'notfound.home': 'トップへ戻る',
-
-  'date.updated': '更新',
 } as const;
 
 export type UIKey = keyof typeof ja;
@@ -142,21 +137,18 @@ const en: Record<UIKey, string> = {
 
   'locale.label': 'Language',
 
-  'hero.eyebrow': 'Open source tools for software teams',
   'hero.word': '紙縒り',
-  'hero.reading': 'ko·yo·ri',
-  'hero.meaning': 'A cord made by twisting thin strips of paper.',
-  'hero.title.1': 'Small tools,',
-  'hero.title.2': 'twisted together.',
+  'hero.reading': 'koyori',
+  'hero.meaning': 'A cord twisted from thin strips of paper',
+  'hero.title.1': 'Open-source tools',
+  'hero.title.2': 'for software teams',
   'hero.lead':
-    'Koyori builds small, focused open-source tools for the daily work of software teams: task management, visual regression testing, a UI library, and a Gantt chart renderer.',
+    'Task management, visual regression testing, a UI library for Vue and React, and a Gantt chart renderer. Four narrowly scoped tools, all developed in the open on GitHub.',
   'hero.cta.products': 'Explore products',
   'hero.cta.github': 'View on GitHub',
-  'hero.scroll': 'Follow the thread',
 
   'products.title': 'Products',
-  'products.eyebrow': 'One cord, four strands',
-  'products.lead': 'Each tool stands on its own, and they fit together.',
+  'products.lead': 'Four tools that work on their own and fit together',
   'products.glance': 'At a glance',
   'products.viewAll': 'All products',
   'products.pageDescription': 'The products Koyori is building: Task, VRT, UI, and Arc.',
@@ -167,15 +159,13 @@ const en: Record<UIKey, string> = {
   'product.links': 'Links',
   'product.repo': 'Repository',
   'product.others': 'More products',
-  'product.detail': 'Learn more',
   'product.status': 'Status',
   'product.status.development': 'In development',
   'product.status.available': 'Available',
   'product.status.alpha': 'Alpha',
 
   'principles.title': 'How we build',
-  'principles.eyebrow': 'Twisted the same way',
-  'principles.lead': 'Four products, one set of principles.',
+  'principles.lead': 'Four products, one set of principles',
   'principles.oss.title': 'Open source, all of it',
   'principles.oss.body':
     'Every line of code lives in the koyori-app organization on GitHub. Design documents live in the repositories too, and work moves through issues and pull requests.',
@@ -190,15 +180,15 @@ const en: Record<UIKey, string> = {
     'Backends and compute cores are written in Rust; interfaces in Vue and React. Arc compiles its Rust core to Wasm to bring that work to the browser.',
 
   'news.title': 'News',
-  'news.lead': 'Updates from Koyori and its products.',
+  'news.lead': 'Updates from Koyori and its products',
   'news.viewAll': 'All news',
-  'news.empty': 'No news yet.',
+  'news.empty': 'No news yet',
   'news.back': 'Back to news',
   'news.alt': '日本語版',
   'news.pageDescription': 'Updates from Koyori and its products.',
 
   'about.title': 'About Koyori',
-  'about.lead': 'Koyori is a family of open-source products for software teams.',
+  'about.lead': 'Koyori is a family of open-source products for software teams',
   'about.what.title': 'What we do',
   'about.what.body':
     'Under the koyori-app organization on GitHub we build Task for task management, VRT for visual regression testing, Koyori UI as a shared component library, and Arc, a Gantt chart renderer. Each one is a narrowly scoped tool for the everyday work of a development team.',
@@ -211,24 +201,23 @@ const en: Record<UIKey, string> = {
   'about.pageDescription': 'What Koyori is, how we build it, and how to get involved.',
 
   'cta.title': 'Build with us',
-  'cta.title.home': 'Twist in a strand of your own.',
+  'cta.title.home': 'Issues and pull requests are welcome',
   'cta.body': 'All of our code is on GitHub. Issues and pull requests are welcome.',
+  'cta.body.home': 'All four products are developed in the koyori-app organization on GitHub',
   'cta.button': 'koyori-app on GitHub',
-  'cta.hint': 'Go on, tug the thread',
 
-  'footer.tagline': 'Small open-source tools for software teams.',
+  'footer.tagline': 'Small open-source tools for software teams',
   'footer.meaning':
     'Koyori (紙縒り): a cord made by twisting thin strips of paper. Each strip is thin; twisted together, they hold.',
   'footer.products': 'Products',
   'footer.site': 'Site',
   'footer.rights': '© 2026 Koyori',
+  'footer.source': 'Source of this site',
 
   'notfound.eyebrow': 'The thread ends here',
   'notfound.title': 'Page not found',
-  'notfound.body': 'The page you are looking for may have moved or been removed.',
+  'notfound.body': 'The page you are looking for may have moved or been removed',
   'notfound.home': 'Back to home',
-
-  'date.updated': 'Updated',
 };
 
 export const ui = { ja, en } satisfies Record<Locale, Record<UIKey, string>>;

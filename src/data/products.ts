@@ -23,10 +23,10 @@ export interface Product {
   repo: string;
   links: ProductLink[];
   /**
-   * 紙縒りの糸の色。トップの WebGL、短冊、プロダクトページのモチーフで使う。
-   * onStrand はその色の上に載せる文字色（コントラスト AA を満たす組み合わせ）。
+   * 紙縒りの糸の色。トップの WebGL の紐、糸の印（StrandMark）、プロダクトページのモチーフで使う。
+   * 文字色や面の色には使わない。
    */
-  strand: { color: string; onStrand: 'ink' | 'paper' };
+  strand: { color: string };
 }
 
 export const githubOrg = 'https://github.com/koyori-app';
@@ -36,8 +36,8 @@ export const products: Product[] = [
     slug: 'task',
     name: 'Koyori Task',
     tagline: {
-      ja: 'セルフホストできる、チームのためのタスク管理。',
-      en: 'Self-hostable task management for teams.',
+      ja: 'セルフホストできる、チームのためのタスク管理',
+      en: 'Self-hostable task management for teams',
     },
     description: {
       ja: 'タスク、スプリント、タイムトラッキング、ワークロードまでを一か所で扱うタスク管理サービスです。Rust（axum）のバックエンドと Vue 3 のフロントエンドで構成し、Docker Compose でセルフホストできます。デスクトップ、iOS、Android のクライアントも開発しています。',
@@ -70,14 +70,14 @@ export const products: Product[] = [
       { label: { ja: 'iOS 版', en: 'iOS app' }, href: `${githubOrg}/task-ios` },
       { label: { ja: 'Android 版', en: 'Android app' }, href: `${githubOrg}/task-android` },
     ],
-    strand: { color: '#c4b5df', onStrand: 'ink' },
+    strand: { color: '#c4b5df' },
   },
   {
     slug: 'vrt',
     name: 'Koyori VRT',
     tagline: {
-      ja: 'CI のスクリーンショットをレビューして、次の baseline に。',
-      en: 'Visual regression testing as a service.',
+      ja: 'CI のスクリーンショットをレビューして、次の baseline に',
+      en: 'Review the screenshots your CI takes and approve the next baseline',
     },
     description: {
       ja: 'CI が撮ったスクリーンショットを受け取り、承認済みの baseline と 1 枚ずつ突き合わせ、差分を人がレビューして承認すると、その結果が次の baseline になる。その一周を回すためのビジュアルリグレッションテストのサービスです。',
@@ -106,14 +106,14 @@ export const products: Product[] = [
     status: 'development',
     repo: `${githubOrg}/vrt`,
     links: [{ label: { ja: 'VRT Actions', en: 'VRT Actions' }, href: `${githubOrg}/vrt-actions` }],
-    strand: { color: '#9fc2a9', onStrand: 'ink' },
+    strand: { color: '#9fc2a9' },
   },
   {
     slug: 'ui',
     name: 'Koyori UI',
     tagline: {
-      ja: 'ひとつのソースから、Vue と React のコンポーネントを。',
-      en: 'One source, Vue and React components.',
+      ja: 'ひとつのソースから、Vue と React のコンポーネントを',
+      en: 'Vue and React components from one Mitosis source',
     },
     description: {
       ja: 'Mitosis の共通ソースから Vue 3 と React 向けのコンポーネントを生成する UI ライブラリです。くすんだラベンダーとセージの配色、CSS 変数のデザイントークン、キーボード操作と読み上げへの配慮を、すべてのコンポーネントで揃えています。Vue 版の `@koyori-app/ui-vue` は npm で公開しています。',
@@ -145,14 +145,14 @@ export const products: Product[] = [
         href: 'https://www.npmjs.com/package/@koyori-app/ui-vue',
       },
     ],
-    strand: { color: '#6e5c8f', onStrand: 'paper' },
+    strand: { color: '#6e5c8f' },
   },
   {
     slug: 'arc',
     name: 'Koyori Arc',
     tagline: {
-      ja: 'Rust と Wasm で描く、依存関係つきのガントチャート。',
-      en: 'Gantt charts with dependency arcs, rendered in Rust and Wasm.',
+      ja: 'Rust と Wasm で描く、依存関係つきのガントチャート',
+      en: 'Gantt charts with dependency arcs, rendered in Rust and Wasm',
     },
     description: {
       ja: 'タスクの依存関係を弧で表すガントチャートのレンダラーです。Rust のコアを Wasm にビルドし、SVG 文字列として出力します。Koyori Task のデータモデルに合わせた入力型を持ち、Vue 3 向けのラッパー `@koyori-app/arc-vue` を提供します。名前は dependency arc、arc discharge、arc furnace の三重の意味から。現在は 0.1.0-alpha 系で、API の互換性はまだ保証していません。',
@@ -179,7 +179,7 @@ export const products: Product[] = [
     status: 'alpha',
     repo: `${githubOrg}/arc`,
     links: [],
-    strand: { color: '#536d5a', onStrand: 'paper' },
+    strand: { color: '#5f7a66' },
   },
 ];
 

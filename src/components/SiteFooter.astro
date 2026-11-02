@@ -2,6 +2,9 @@
 import type { Locale } from '../i18n/ui';
 import { localePath, t } from '../i18n/utils';
 import { githubOrg, products } from '../data/products';
+import LogoMark from './LogoMark.astro';
+import StrandMark from './StrandMark.astro';
+import Icon from './Icon.astro';
 
 interface Props {
   lang: Locale;
@@ -17,34 +20,28 @@ const siteLinks = [
 ];
 ---
 
-<footer class="sumi-sheet no-bottom on-sumi mt-32">
-  <div class="container-site grid gap-14 pt-20 pb-14 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,1fr)]">
-    <div class="flex items-start gap-6">
-      <p class="footer-word" lang="ja" aria-hidden="true">
-        紙縒り
+<footer class="mt-32 border-t border-line bg-paper-2">
+  <div class="container-site grid gap-12 pt-16 pb-12 md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">
+    <div>
+      <p class="flex items-center gap-2 text-ink">
+        <LogoMark class="h-7 w-7" />
+        <span class="text-lg leading-none font-medium">Koyori</span>
       </p>
-      <div>
-        <p class="footer-mark">Koyori</p>
-        <p class="mt-5 max-w-sm text-on-sumi">{tr('footer.tagline')}</p>
-        <p class="mt-3 max-w-sm text-sm text-on-sumi-2">{tr('footer.meaning')}</p>
-      </div>
+      <p class="mt-4 max-w-sm text-ink">{tr('footer.tagline')}</p>
+      <p class="mt-2 max-w-sm text-sm leading-6 text-ink-2">{tr('footer.meaning')}</p>
     </div>
     <nav aria-labelledby="footer-products">
-      <h2 id="footer-products" class="label-mono text-on-sumi-2">
+      <h2 id="footer-products" class="text-sm text-ink-3">
         {tr('footer.products')}
       </h2>
-      <ul class="mt-5 flex flex-col gap-1">
+      <ul class="mt-3 flex flex-col">
         {products.map((product) => (
           <li>
             <a
               href={localePath(lang, `/products/${product.slug}`)}
-              class="group inline-flex min-h-9 items-center gap-3 text-on-sumi hover:underline hover:underline-offset-4"
+              class="inline-flex min-h-10 items-center gap-3 text-ink-2 transition-colors duration-150 hover:text-ink"
             >
-              <span
-                class="h-0.5 w-5"
-                style={`background:${product.strand.color}`}
-                aria-hidden="true"
-              />
+              <StrandMark color={product.strand.color} />
               {product.name}
             </a>
           </li>
@@ -52,61 +49,36 @@ const siteLinks = [
       </ul>
     </nav>
     <nav aria-labelledby="footer-site">
-      <h2 id="footer-site" class="label-mono text-on-sumi-2">
+      <h2 id="footer-site" class="text-sm text-ink-3">
         {tr('footer.site')}
       </h2>
-      <ul class="mt-5 flex flex-col gap-1">
+      <ul class="mt-3 flex flex-col">
         {siteLinks.map((link) => (
           <li>
             <a
               href={link.href}
               rel={link.external ? 'noopener' : undefined}
-              class="inline-flex min-h-9 items-center text-on-sumi hover:underline hover:underline-offset-4"
+              class="inline-flex min-h-10 items-center gap-1 text-ink-2 transition-colors duration-150 hover:text-ink"
             >
               {link.label}
-              {link.external && <span aria-hidden="true">&nbsp;↗</span>}
+              {link.external && <Icon name="arrow-up-right" />}
             </a>
           </li>
         ))}
       </ul>
     </nav>
   </div>
-  <div class="border-t border-sumi-line">
-    <div class="container-site flex flex-wrap items-center justify-between gap-2 py-5">
-      <p class="label-mono text-on-sumi-2">{tr('footer.rights')}</p>
+  <div class="border-t border-line">
+    <div class="container-site flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-4">
+      <p class="meta">{tr('footer.rights')}</p>
       <a
         href="https://github.com/koyori-app/official-site"
         rel="noopener"
-        class="label-mono inline-flex min-h-9 items-center text-on-sumi-2 hover:text-on-sumi"
+        class="meta inline-flex min-h-10 items-center gap-1 transition-colors duration-150 hover:text-ink"
       >
-        Source on GitHub ↗
+        {tr('footer.source')}
+        <Icon name="arrow-up-right" />
       </a>
     </div>
   </div>
 </footer>
-
-<style>
-  .footer-mark {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 380;
-    font-size: clamp(4rem, 12vw, 9rem);
-    line-height: 0.85;
-    letter-spacing: -0.045em;
-    background: linear-gradient(100deg, var(--koyori-lav) 10%, var(--koyori-sage) 90%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    padding-bottom: 0.08em;
-  }
-  .footer-word {
-    writing-mode: vertical-rl;
-    font-family: var(--font-mincho);
-    font-size: 1.1rem;
-    letter-spacing: 0.4em;
-    color: var(--koyori-on-sumi-2);
-    padding-top: 0.4rem;
-    border-left: 1px solid var(--koyori-sumi-line);
-    padding-left: 0.6rem;
-  }
-</style>

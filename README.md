@@ -4,13 +4,13 @@
 
 ## 技術構成
 
-| 役割           | 採用                                                                                                                 |
-| -------------- | -------------------------------------------------------------------------------------------------------------------- |
-| フレームワーク | [Astro](https://astro.build)（静的出力） + React islands                                                             |
-| スタイル       | Tailwind CSS v4。色・余白のトークンは [koyori-app/ui](https://github.com/koyori-app/ui) の `tokens.css` に揃えている |
-| 多言語         | Astro の i18n ルーティング。日本語が既定（`/`）、英語は `/en/`                                                       |
-| お知らせ       | Content Collections（Markdown）                                                                                      |
-| 配信           | GitHub Pages（GitHub Actions でビルド・デプロイ）                                                                    |
+| 役割           | 採用                                                                                                         |
+| -------------- | ------------------------------------------------------------------------------------------------------------ |
+| フレームワーク | [Astro](https://astro.build)（静的出力） + React islands                                                     |
+| スタイル       | Tailwind CSS v4。ブランド色は [koyori-app/ui](https://github.com/koyori-app/ui) の `tokens.css` に揃えている |
+| 多言語         | Astro の i18n ルーティング。日本語が既定（`/`）、英語は `/en/`                                               |
+| お知らせ       | Content Collections（Markdown）                                                                              |
+| 配信           | GitHub Pages（GitHub Actions でビルド・デプロイ）                                                            |
 
 ## 開発
 
@@ -35,10 +35,10 @@ src/
   data/        products.ts にプロダクトの情報（名前・説明・リンク・ライセンス）
   content/     news/<lang>/<slug>.md にお知らせ
   layouts/     BaseLayout.astro（head のメタ情報、hreflang、OGP、ヘッダー・フッター）
-  components/  Astro コンポーネント。home/ にトップのヒーローと紐、product/ にプロダクトページのモチーフ、
-               react/ に React island（モバイルナビ）。TanzakuList.astro は 4 枚の短冊
+  components/  Astro コンポーネント。home/ にトップのヒーロー、product/ にプロダクトページのモチーフ、
+               react/ に React island（モバイルナビ）。ProductCard.astro と StrandMark.astro（糸の印）
   scripts/     ブラウザで動く TypeScript。koyori/ に WebGL のヒーロー（three.js とシェーダー）、
-               cord2d.ts / rope.ts / motifs.ts に 2D canvas の紐とモチーフ
+               cord2d.ts / motifs.ts に 2D canvas の紐とモチーフ
   views/       各ページの本体。言語を props で受け取る
   pages/       ルーティング。日本語は直下、英語は en/ 配下で同じ構成。中身は views を呼ぶだけ
   styles/      global.css（Tailwind とデザイントークン、ボタン、お知らせ本文の見た目）
@@ -73,25 +73,34 @@ translationKey: slug # 日英で同じ値にすると記事ページで相互リ
 
 ### OG 画像
 
-`public/og.png`（1200×630）はトップのヒーローを 1200×694 のビューポートで開き、WebGL の準備ができてから（`canvas[data-ready="true"]`）ヘッダー分の 64px を除いて撮ったものです。ヒーローの文言や見た目を変えたら撮り直してください。
+`public/og.png`（1200×630）はトップのヒーローを 1200×694 のビューポートで開き、WebGL の準備ができて（`canvas[data-ready="true"]`）紐の登場が終わってから、ヘッダー分の 64px を除いて撮ったものです。ヒーローの文言や見た目を変えたら撮り直してください。
 
 ### デザインの考え方
 
-紙縒り（こより）は、細く切った紙を撚り合わせてつくる紐です。サイトは「生成りの紙」と「墨」を地にし、ラベンダーとセージを 4 本の糸（Task / VRT / UI / Arc）の色にしています（`src/data/products.ts` の `strand`）。
+紙縒り（こより）は、細く切った紙を撚り合わせてつくる紐です。サイトは生成りの紙（`#f1ece2`）を地に、墨の 3 段階（`ink` / `ink-2` / `ink-3`）を文字に使い、画面の色はそこまでに抑えています。ブランド色のラベンダーとセージは 4 本の糸（Task / VRT / UI / Arc）の色で（`src/data/products.ts` の `strand`）、次の 2 か所にだけ出てきます。
 
-- トップのヒーローでは、4 色の紙の帯が撚られた紐が紙面を縫うように出入りし、見出しの文字をくぐったり越えたりしたあと、4 本の糸にほどけて画面下の各プロダクトへ向かう
-- その糸は CSS の線としてそのまま下のセクションへ続き、4 枚の短冊（`TanzakuList.astro`）を吊る。スマートフォンでは左端に束ねて流す
-- 各プロダクトページには、そのプロダクトの糸の色で描く小さな 2D canvas のモチーフ（織り、差分、分岐、依存の弧）を置く
+- **トップのヒーロー（唯一の見せ場）**: 4 色の紙の帯を撚った紐が右上から紙を縫うように通り、ほどけて 4 本の糸になり、下に並ぶ 4 つのプロダクトの列へ降りる。見出しは左の何もない紙の上に置き、紐とは重ねない
+- **糸の印（`StrandMark.astro`）**: プロダクト名の横に置く、その色で撚った短い糸。カード、一覧表、フッター、プロダクトページで使い、それ以外の装飾には使わない
+
+そのほかの決まりごと。
+
+- 書体は本文と UI が Instrument Sans（和文は Noto Sans JP）、大きな見出しだけ Fraunces（和文は Noto Serif JP の明朝）。等幅の JetBrains Mono はパッケージ名・ライセンス ID・技術スタックなどコードにだけ使う。大文字のラベル、イタリック、飾りの通し番号は使わない
+- アクセントは濃いラベンダー `#5a4880` の 1 色で、リンクとフォーカスリングに使う。主ボタンは墨の地に紙色の文字
+- 余白は 4px 刻み。角丸はボタン 6px、カードと枠 8px
+- 動きは、ヒーローの紐が引かれていく一度きりの登場、紐のゆっくりした撚れ、ポインターで糸が弾かれる反応、プロダクトページのモチーフが画面に入ったときに一度だけ描き進める動きだけ。ホバーは色か面の変化だけ
+- 各プロダクトページには、そのプロダクトの糸の色で描く 2D canvas のモチーフ（織り、差分、分岐、依存の弧）を 1 つ置く
+
+デザインは Damir Sokolovsky の [unslop](https://github.com/heydamir/unslop) の手順で見直しています。
 
 ### WebGL について
 
 ヒーローは `src/components/home/HomeHero.astro` の `<script>` から、ブラウザが暇になったところで `src/scripts/koyori/scene.ts` を動的 import します。three.js を含むこの chunk は gzip で約 135 KB あり、トップ以外のページでは読み込みません。
 
-- 紐の形はすべて頂点シェーダー（`src/scripts/koyori/shaders.ts`）で計算します。同じ形を「本体」「紙に落ちる影」「紙の裏に透ける色」の 3 通りに描きます
-- 紐の始点・ほどける点・4 本の出口は DOM の目印（`data-gl-anchor` / `data-gl-exit`）から読むので、レイアウトは CSS 側で調整できます
-- 見出し（`data-gl-text`）は 2D canvas に描いて紙面のテクスチャに刷り、紐と前後関係を持たせます。DOM の見出しは読み上げ・選択のために残し、WebGL の準備ができたら文字色だけ透明にします
+- 紐の形はすべて頂点シェーダー（`src/scripts/koyori/shaders.ts`）で計算します。同じ形を「本体」「紙に落ちる影」「紙の裏に透ける色」の 3 通りに描き、紙面には紐が通る穴だけを描きます
+- 紐の始点・ほどける点・4 本の出口は DOM の目印（`data-gl-anchor` / `data-gl-exit`）から読むので、レイアウトは CSS 側で調整できます。出口はプロダクトの 4 列（`product-grid`）の糸の印の真上に置いています
+- 見出しは DOM のテキストのまま紙の上に重ねます（canvas は背面で `aria-hidden`）
 - `prefers-reduced-motion` のときは 1 フレームだけ描いて止め、画面外ではループを止めます。DPR は最大 2 です
-- WebGL が使えない環境では、同じ構図の SVG の紐を表示します
+- WebGL が使えない環境では、同じ構図の SVG の紐を表示します（デスクトップ用とスマートフォン用の 2 枚）
 
 ## デプロイと独自ドメイン
 

@@ -8,31 +8,21 @@ interface Props {
 }
 const { lang, targets } = Astro.props;
 const tr = t(lang);
+// 2 言語なので、いま表示していない言語へのリンクを 1 つだけ置く
+const others = locales.filter((locale) => locale !== lang);
 ---
 
 <nav aria-label={tr('locale.label')}>
-  <ul class="flex items-center font-mono text-xs tracking-[0.1em]">
-    {locales.map((locale, i) => (
-      <li class="flex items-center">
-        {i > 0 && (
-          <span class="px-0.5 text-ink-3" aria-hidden="true">
-            /
-          </span>
-        )}
+  <ul class="flex items-center">
+    {others.map((locale) => (
+      <li>
         <a
           href={targets[locale]}
           hreflang={locale}
           lang={locale}
-          aria-label={localeNames[locale]}
-          aria-current={locale === lang ? 'true' : undefined}
-          class:list={[
-            'inline-flex h-10 min-w-10 items-center justify-center px-1.5 uppercase transition-colors duration-150',
-            locale === lang
-              ? 'text-ink underline decoration-2 underline-offset-[6px]'
-              : 'text-ink-3 hover:text-ink',
-          ]}
+          class="inline-flex min-h-10 items-center px-2 text-[0.9375rem] text-ink-2 transition-colors duration-150 hover:text-ink"
         >
-          {locale}
+          {localeNames[locale]}
         </a>
       </li>
     ))}
