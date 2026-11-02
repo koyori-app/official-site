@@ -1,0 +1,77 @@
+---
+import type { Locale } from '../i18n/ui';
+import { localePath, t } from '../i18n/utils';
+import { githubOrg, products } from '../data/products';
+import LogoMark from './LogoMark.astro';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const tr = t(lang);
+
+const siteLinks = [
+  { href: localePath(lang, '/products/'), label: tr('nav.products') },
+  { href: localePath(lang, '/news/'), label: tr('nav.news') },
+  { href: localePath(lang, '/about/'), label: tr('nav.about') },
+  { href: githubOrg, label: tr('nav.github'), external: true },
+];
+---
+
+<footer class="mt-24 border-t border-border bg-surface-raised/60">
+  <div class="container-site grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr]">
+    <div>
+      <a href={localePath(lang, '/')} class="flex items-center gap-2.5 text-lg font-bold text-ink">
+        <LogoMark class="h-8 w-8" />
+        <span>Koyori</span>
+      </a>
+      <p class="mt-4 max-w-sm text-sm text-ink-secondary">{tr('footer.tagline')}</p>
+    </div>
+    <nav aria-labelledby="footer-products">
+      <h2 id="footer-products" class="text-sm font-semibold text-ink">
+        {tr('footer.products')}
+      </h2>
+      <ul class="mt-3 flex flex-col gap-2">
+        {products.map((product) => (
+          <li>
+            <a
+              href={localePath(lang, `/products/${product.slug}`)}
+              class="text-sm text-ink-secondary transition-colors duration-150 hover:text-ink"
+            >
+              {product.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <nav aria-labelledby="footer-site">
+      <h2 id="footer-site" class="text-sm font-semibold text-ink">
+        {tr('footer.site')}
+      </h2>
+      <ul class="mt-3 flex flex-col gap-2">
+        {siteLinks.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              rel={link.external ? 'noopener' : undefined}
+              class="text-sm text-ink-secondary transition-colors duration-150 hover:text-ink"
+            >
+              {link.label}
+              {link.external && <span aria-hidden="true"> ↗</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+  <div class="border-t border-border">
+    <div class="container-site flex flex-wrap items-center justify-between gap-2 py-5 text-xs text-ink-muted">
+      <p>{tr('footer.rights')}</p>
+      <p>
+        <a href="https://github.com/koyori-app/official-site" rel="noopener" class="hover:text-ink">
+          Source on GitHub ↗
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,29 @@
+---
+import { localeNames, locales, type Locale } from '../i18n/ui';
+import { t } from '../i18n/utils';
+
+interface Props {
+  lang: Locale;
+  targets: Record<Locale, string>;
+}
+const { lang, targets } = Astro.props;
+const tr = t(lang);
+const others = locales.filter((l) => l !== lang);
+---
+
+<nav aria-label={tr('locale.label')}>
+  <ul class="flex items-center gap-1">
+    {others.map((locale) => (
+      <li>
+        <a
+          href={targets[locale]}
+          hreflang={locale}
+          lang={locale}
+          class="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm font-medium text-ink-secondary transition-colors duration-150 hover:bg-surface-hover hover:text-ink"
+        >
+          {localeNames[locale]}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>

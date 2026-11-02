@@ -1,0 +1,97 @@
+---
+import '../styles/global.css';
+import { bcp47, defaultLocale, locales, type Locale } from '../i18n/ui';
+import { localePath, stripLocale, t } from '../i18n/utils';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+interface Props {
+  lang: Locale;
+  /** ページ固有のタイトル。省略するとサイト名のみ */
+  title?: string;
+  description?: string;
+  /**
+   * 他言語版のパス。省略すると同じパスの言語違いを使う。
+   * 翻訳がないページでは、存在する言語だけを渡す。
+   */
+  alternates?: Partial<Record<Locale, string>>;
+  ogType?: 'website' | 'article';
+}
+
+const { lang, title, description, alternates, ogType = 'website' } = Astro.props;
+const tr = t(lang);
+const siteName = tr('site.name');
+const fullTitle = title ? `${title} | ${siteName}` : siteName;
+const metaDescription = description ?? tr('site.description');
+
+const site = Astro.site ?? new URL('https://www.koyori.app');
+const basePath = stripLocale(Astro.url.pathname);
+const canonicalPath = localePath(lang, basePath);
+const canonical = new URL(canonicalPath, site);
+
+const hreflang: Partial<Record<Locale, string>> =
+  alternates ?? Object.fromEntries(locales.map((l) => [l, localePath(l, basePath)]));
+const switchTargets = Object.fromEntries(
+  locales.map((l) => [l, hreflang[l] ?? localePath(l, '/')]),
+) as Record<Locale, string>;
+
+const ogImage = new URL('/og.png', site);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={metaDescription} />
+    <link rel="canonical" href={canonical.href} />
+    {(Object.entries(hreflang) as [Locale, string][]).map(([l, path]) => (
+      <link rel="alternate" hreflang={bcp47[l]} href={new URL(path, site).href} />
+    ))}
+    {hreflang[defaultLocale] && (
+      <link
+        rel="alternate"
+        hreflang="x-default"
+        href={new URL(hreflang[defaultLocale], site).href}
+      />
+    )}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#faf8f5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1b1920" media="(prefers-color-scheme: dark)" />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={ogImage.href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={bcp47[lang].replace('-', '_')} />
+    {locales
+      .filter((l) => l !== lang && hreflang[l])
+      .map((l) => (
+        <meta property="og:locale:alternate" content={bcp47[l].replace('-', '_')} />
+      ))}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={metaDescription} />
+    <meta name="twitter:image" content={ogImage.href} />
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-accent focus:px-4 focus:py-2 focus:font-semibold focus:text-on-accent"
+    >
+      {tr('skip')}
+    </a>
+    <SiteHeader lang={lang} switchTargets={switchTargets} />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <SiteFooter lang={lang} />
+  </body>
+</html>

@@ -1,0 +1,89 @@
+---
+import type { Locale } from '../i18n/ui';
+import { localePath, stripLocale, t } from '../i18n/utils';
+import { githubOrg } from '../data/products';
+import LogoMark from './LogoMark.astro';
+import LocaleSwitch from './LocaleSwitch.astro';
+import MobileNav from './react/MobileNav';
+
+interface Props {
+  lang: Locale;
+  switchTargets: Record<Locale, string>;
+}
+const { lang, switchTargets } = Astro.props;
+const tr = t(lang);
+const current = stripLocale(Astro.url.pathname);
+
+const isCurrent = (path: string) => {
+  const normalized = current.endsWith('/') ? current : `${current}/`;
+  return path === '/' ? normalized === '/' : normalized.startsWith(path);
+};
+
+const nav = [
+  { path: '/', label: tr('nav.home') },
+  { path: '/products/', label: tr('nav.products') },
+  { path: '/news/', label: tr('nav.news') },
+  { path: '/about/', label: tr('nav.about') },
+].map((item) => ({
+  href: localePath(lang, item.path),
+  label: item.label,
+  current: isCurrent(item.path),
+}));
+
+const mobileItems = [...nav, { href: githubOrg, label: tr('nav.github'), external: true }];
+---
+
+<header class="sticky top-0 z-40 border-b border-border/70 bg-surface/85 backdrop-blur supports-[backdrop-filter]:bg-surface/75">
+  <div class="container-site flex h-16 items-center justify-between gap-4">
+    <a
+      href={localePath(lang, '/')}
+      class="flex items-center gap-2.5 text-lg font-bold tracking-tight text-ink"
+      aria-label={tr('site.name')}
+    >
+      <LogoMark class="h-8 w-8" />
+      <span>Koyori</span>
+    </a>
+
+    <nav aria-label={tr('nav.primary')} class="hidden md:block">
+      <ul class="flex items-center gap-1">
+        {nav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={item.current ? 'page' : undefined}
+              class:list={[
+                'inline-flex min-h-9 items-center rounded-md px-3 text-sm font-medium transition-colors duration-150',
+                item.current
+                  ? 'bg-accent-subtle text-ink'
+                  : 'text-ink-secondary hover:bg-surface-hover hover:text-ink',
+              ]}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+        <li>
+          <a
+            href={githubOrg}
+            rel="noopener"
+            class="inline-flex min-h-9 items-center gap-1 rounded-md px-3 text-sm font-medium text-ink-secondary transition-colors duration-150 hover:bg-surface-hover hover:text-ink"
+          >
+            {tr('nav.github')}
+            <span aria-hidden="true">↗</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <LocaleSwitch lang={lang} targets={switchTargets} />
+      <div class="md:hidden">
+        <MobileNav
+          client:media="(max-width: 767px)"
+          items={mobileItems}
+          labels={{ open: tr('nav.open'), close: tr('nav.close'), menu: tr('nav.menu') }}
+        />
+      </div>
+    </div>
+  </div>
+</header>

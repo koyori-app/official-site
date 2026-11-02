@@ -1,0 +1,13 @@
+---
+import NewsPostView from '../../views/NewsPostView.astro';
+import { getNews, newsSlug } from '../../lib/news';
+
+export async function getStaticPaths() {
+  const entries = await getNews('ja');
+  return entries.map((entry) => ({ params: { slug: newsSlug(entry) }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+---
+
+<NewsPostView lang="ja" entry={entry} />

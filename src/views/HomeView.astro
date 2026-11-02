@@ -1,0 +1,165 @@
+---
+import type { Locale } from '../i18n/ui';
+import { formatDate, isoDate, localePath, t } from '../i18n/utils';
+import { githubOrg, products } from '../data/products';
+import { getNews, newsSlug } from '../lib/news';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import ProductTabs from '../components/react/ProductTabs';
+
+interface Props {
+  lang: Locale;
+}
+const { lang } = Astro.props;
+const tr = t(lang);
+
+const tabProducts = products.map((p) => ({
+  slug: p.slug,
+  name: p.name,
+  tagline: p.tagline[lang],
+  description: p.description[lang],
+  features: p.features[lang],
+  stack: p.stack,
+  statusLabel: tr(`product.status.${p.status}`),
+  href: localePath(lang, `/products/${p.slug}`),
+  tone: p.tone,
+}));
+
+const principles = (['oss', 'selfhost', 'consistent', 'rust'] as const).map((key) => ({
+  title: tr(`principles.${key}.title`),
+  body: tr(`principles.${key}.body`),
+}));
+
+const news = (await getNews(lang)).slice(0, 3);
+---
+
+<BaseLayout lang={lang}>
+  <section class="relative isolate overflow-hidden">
+    <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+      <div class="absolute -top-32 right-[-10%] h-[28rem] w-[28rem] rounded-full bg-accent/50 blur-3xl"></div>
+      <div class="absolute top-40 left-[-15%] h-[24rem] w-[24rem] rounded-full bg-accent-soft/80 blur-3xl"></div>
+    </div>
+    <div class="container-site py-20 sm:py-28 lg:py-32">
+      <div class="max-w-3xl">
+        <p class="text-sm font-semibold tracking-wide text-sage uppercase">{tr('hero.eyebrow')}</p>
+        <h1 class="mt-4 text-4xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl">
+          <span class="block">{tr('hero.title.1')}</span>
+          <span class="block">{tr('hero.title.2')}</span>
+        </h1>
+        <p class="mt-6 max-w-2xl text-lg text-ink-secondary sm:text-xl">{tr('hero.lead')}</p>
+        <div class="mt-10 flex flex-wrap gap-3">
+          <a href={localePath(lang, '/products/')} class="btn btn-primary">
+            {tr('hero.cta.products')}
+          </a>
+          <a href={githubOrg} rel="noopener" class="btn btn-ghost">
+            {tr('hero.cta.github')}
+            <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-site py-16 sm:py-20" aria-labelledby="home-products">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <SectionHeading id="home-products" title={tr('products.title')} lead={tr('products.lead')} />
+      <a
+        href={localePath(lang, '/products/')}
+        class="text-sm font-semibold text-link underline-offset-4 hover:underline"
+      >
+        {tr('products.viewAll')} →
+      </a>
+    </div>
+    <div class="mt-10">
+      <ProductTabs
+        client:visible
+        products={tabProducts}
+        labels={{
+          features: tr('product.features'),
+          detail: tr('product.detail'),
+          list: tr('products.title'),
+        }}
+      />
+    </div>
+  </section>
+
+  <section class="bg-surface-raised/60 py-16 sm:py-20" aria-labelledby="home-principles">
+    <div class="container-site">
+      <SectionHeading
+        id="home-principles"
+        title={tr('principles.title')}
+        lead={tr('principles.lead')}
+      />
+      <ul class="mt-10 grid gap-6 sm:grid-cols-2">
+        {principles.map((item, i) => (
+          <li class="rounded-2xl border border-border bg-surface p-6">
+            <span
+              class:list={[
+                'inline-flex h-9 w-9 items-center justify-center rounded-lg text-sm font-bold',
+                i % 2 === 0 ? 'bg-accent text-on-accent' : 'bg-accent-soft text-ink',
+              ]}
+              aria-hidden="true"
+            >
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <h3 class="mt-4 text-lg font-bold text-ink">{item.title}</h3>
+            <p class="mt-2 text-ink-secondary">{item.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="container-site py-16 sm:py-20" aria-labelledby="home-news">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <SectionHeading id="home-news" title={tr('news.title')} lead={tr('news.lead')} />
+      <a
+        href={localePath(lang, '/news/')}
+        class="text-sm font-semibold text-link underline-offset-4 hover:underline"
+      >
+        {tr('news.viewAll')} →
+      </a>
+    </div>
+    {news.length === 0 ? (
+      <p class="mt-8 text-ink-secondary">{tr('news.empty')}</p>
+    ) : (
+      <ul class="mt-8 divide-y divide-border border-y border-border">
+        {news.map((entry) => (
+          <li>
+            <a
+              href={localePath(lang, `/news/${newsSlug(entry)}`)}
+              class="group flex flex-col gap-1 py-5 sm:flex-row sm:items-baseline sm:gap-6"
+            >
+              <time
+                datetime={isoDate(entry.data.date)}
+                class="shrink-0 text-sm text-ink-muted tabular-nums"
+              >
+                {formatDate(entry.data.date, lang)}
+              </time>
+              <span class="font-semibold text-ink underline-offset-4 group-hover:underline">
+                {entry.data.title}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+
+  <section class="container-site pb-8">
+    <div class="relative overflow-hidden rounded-3xl bg-linear-to-br from-accent via-accent-subtle to-accent-soft px-6 py-14 text-center sm:px-12">
+      <h2 class="text-3xl font-bold tracking-tight text-on-accent sm:text-4xl">
+        {tr('cta.title')}
+      </h2>
+      <p class="mx-auto mt-4 max-w-xl text-on-accent/80">{tr('cta.body')}</p>
+      <a
+        href={githubOrg}
+        rel="noopener"
+        class="btn mt-8 border-on-accent/20 bg-surface-raised text-ink hover:bg-surface"
+      >
+        {tr('cta.button')}
+        <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </section>
+</BaseLayout>

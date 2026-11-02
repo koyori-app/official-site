@@ -1,0 +1,62 @@
+---
+import { render } from 'astro:content';
+import type { Locale } from '../i18n/ui';
+import { formatDate, isoDate, localePath, t } from '../i18n/utils';
+import { findTranslations, newsSlug, type NewsEntry } from '../lib/news';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+interface Props {
+  lang: Locale;
+  entry: NewsEntry;
+}
+const { lang, entry } = Astro.props;
+const tr = t(lang);
+const { Content } = await render(entry);
+
+const translations = await findTranslations(entry);
+const alternates: Partial<Record<Locale, string>> = {
+  [lang]: localePath(lang, `/news/${newsSlug(entry)}`),
+};
+for (const other of translations) {
+  alternates[other.data.lang] = localePath(other.data.lang, `/news/${newsSlug(other)}`);
+}
+---
+
+<BaseLayout
+  lang={lang}
+  title={entry.data.title}
+  description={entry.data.description}
+  alternates={alternates}
+  ogType="article"
+>
+  <article class="container-site py-16 sm:py-20">
+    <div class="mx-auto max-w-3xl">
+      <a href={localePath(lang, '/news/')} class="text-sm font-semibold text-link hover:underline">
+        ← {tr('news.back')}
+      </a>
+      <header class="mt-6">
+        <time datetime={isoDate(entry.data.date)} class="text-sm text-ink-muted tabular-nums">
+          {formatDate(entry.data.date, lang)}
+        </time>
+        <h1 class="mt-2 text-3xl font-bold tracking-tight text-ink text-balance sm:text-4xl">
+          {entry.data.title}
+        </h1>
+        {translations.map((other) => (
+          <p class="mt-4 text-sm">
+            <a
+              href={alternates[other.data.lang]}
+              hreflang={other.data.lang}
+              lang={other.data.lang}
+              class="text-link underline underline-offset-4"
+            >
+              {tr('news.alt')}
+            </a>
+          </p>
+        ))}
+      </header>
+      <div class="prose mt-10 text-ink-secondary">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>

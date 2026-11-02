@@ -1,0 +1,145 @@
+---
+import type { Locale } from '../i18n/ui';
+import { localePath, t } from '../i18n/utils';
+import { products, type Product } from '../data/products';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import StatusBadge from '../components/StatusBadge.astro';
+import ExternalIcon from '../components/ExternalIcon.astro';
+
+interface Props {
+  lang: Locale;
+  product: Product;
+}
+const { lang, product } = Astro.props;
+const tr = t(lang);
+const others = products.filter((p) => p.slug !== product.slug);
+const tone =
+  product.tone === 'sage'
+    ? 'from-accent-soft/80 via-surface to-surface'
+    : 'from-accent-subtle via-surface to-surface';
+
+/** `code` を <code> にする（features と description の軽い整形） */
+function inlineCode(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(
+      /`([^`]+)`/g,
+      '<code class="rounded bg-accent-subtle px-1 py-0.5 text-[0.9em]">$1</code>',
+    );
+}
+---
+
+<BaseLayout lang={lang} title={product.name} description={product.tagline[lang]}>
+  <section class:list={['bg-linear-to-b', tone]}>
+    <div class="container-site py-16 sm:py-20">
+      <nav aria-label="Breadcrumb" class="text-sm text-ink-muted">
+        <ol class="flex flex-wrap items-center gap-2">
+          <li>
+            <a href={localePath(lang, '/products/')} class="hover:text-ink">
+              {tr('products.title')}
+            </a>
+          </li>
+          <li aria-hidden="true">/</li>
+          <li aria-current="page" class="text-ink-secondary">
+            {product.name}
+          </li>
+        </ol>
+      </nav>
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <h1 class="text-4xl font-bold tracking-tight text-ink sm:text-5xl">{product.name}</h1>
+        <StatusBadge status={product.status} lang={lang} />
+      </div>
+      <p class="mt-4 max-w-3xl text-xl text-ink-secondary sm:text-2xl">{product.tagline[lang]}</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href={product.repo} rel="noopener" class="btn btn-primary">
+          {tr('product.repo')}
+          <ExternalIcon />
+        </a>
+        {product.links.map((link) => (
+          <a href={link.href} rel="noopener" class="btn btn-ghost">
+            {link.label[lang]}
+            <ExternalIcon />
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="container-site grid gap-12 py-16 lg:grid-cols-[1fr_18rem]">
+    <div>
+      <p
+        class="max-w-prose text-lg text-ink-secondary"
+        set:html={inlineCode(product.description[lang])}
+      />
+      <h2 class="mt-12 text-2xl font-bold tracking-tight text-ink">{tr('product.features')}</h2>
+      <ul class="mt-5 grid gap-3">
+        {product.features[lang].map((feature) => (
+          <li class="flex items-start gap-3 rounded-xl border border-border bg-surface-raised px-4 py-3 text-ink-secondary">
+            <span class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-sage" aria-hidden="true" />
+            <span set:html={inlineCode(feature)} />
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <aside class="lg:sticky lg:top-24 lg:self-start">
+      <dl class="rounded-2xl border border-border bg-surface-raised p-6">
+        <dt class="text-sm font-semibold text-ink">{tr('product.stack')}</dt>
+        <dd class="mt-2">
+          <ul class="flex flex-wrap gap-1.5">
+            {product.stack.map((item) => (
+              <li class="rounded-md bg-accent-subtle px-2 py-0.5 text-xs font-medium text-ink-secondary">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </dd>
+        <dt class="mt-6 text-sm font-semibold text-ink">{tr('product.license')}</dt>
+        <dd class="mt-1 text-sm text-ink-secondary">{product.license}</dd>
+        <dt class="mt-6 text-sm font-semibold text-ink">{tr('product.links')}</dt>
+        <dd class="mt-1">
+          <ul class="flex flex-col gap-1.5 text-sm">
+            <li>
+              <a
+                href={product.repo}
+                rel="noopener"
+                class="inline-flex items-center gap-1 text-link hover:underline"
+              >
+                GitHub
+                <ExternalIcon />
+              </a>
+            </li>
+            {product.links.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  rel="noopener"
+                  class="inline-flex items-center gap-1 text-link hover:underline"
+                >
+                  {link.label[lang]}
+                  <ExternalIcon />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </dd>
+      </dl>
+    </aside>
+  </section>
+
+  <section class="container-site pb-4" aria-labelledby="product-others">
+    <h2 id="product-others" class="text-2xl font-bold tracking-tight text-ink">
+      {tr('product.others')}
+    </h2>
+    <ul class="mt-6 grid gap-6 sm:grid-cols-3">
+      {others.map((p) => (
+        <li>
+          <ProductCard product={p} lang={lang} />
+        </li>
+      ))}
+    </ul>
+  </section>
+</BaseLayout>
