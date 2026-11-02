@@ -1,53 +1,87 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/space-grotesk';
 @import '@fontsource-variable/noto-sans-jp';
+@import '@fontsource-variable/noto-serif-jp';
+@import '@fontsource-variable/fraunces/opsz.css';
+@import '@fontsource-variable/fraunces/opsz-italic.css';
 @import '@fontsource-variable/jetbrains-mono';
 
 /*
- * Koyori のサイト用トークン。ダーク基調 1 本。
- * ラベンダー #c4b5df とセージ #5f7a66 は koyori-app/ui の tokens.css と共通。
+ * Koyori のサイト用トークン。
+ * 紙縒り（こより）＝紙を撚ってつくる紐、から「生成りの紙」と「墨」を地に、
+ * ラベンダー #c4b5df とセージ #9fc2a9 / #5f7a66（koyori-app/ui の tokens.css と共通）を糸の色に使う。
  */
 :root {
   --font-sans: 'Space Grotesk Variable', 'Noto Sans JP Variable', system-ui, sans-serif;
+  --font-serif: 'Fraunces Variable', 'Noto Serif JP Variable', 'Hiragino Mincho ProN', serif;
+  --font-mincho: 'Noto Serif JP Variable', 'Hiragino Mincho ProN', serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
-  --koyori-bg: #0e0d12;
-  --koyori-bg-2: #15131b;
-  --koyori-bg-3: #1d1a26;
-  --koyori-line: rgba(236, 232, 240, 0.1);
-  --koyori-line-strong: rgba(236, 232, 240, 0.22);
-  --koyori-fg: #ece8f0;
-  --koyori-fg-2: #b4acc0;
-  --koyori-fg-3: #7d7588;
+  /* 紙 */
+  --koyori-paper: #f1ece2;
+  --koyori-paper-2: #e9e3d6;
+  --koyori-paper-3: #f8f5ef;
+  /* 墨 */
+  --koyori-ink: #18161d;
+  --koyori-ink-2: #4a4452;
+  --koyori-ink-3: #635c6b;
+  --koyori-line: rgba(24, 22, 29, 0.14);
+  --koyori-line-strong: rgba(24, 22, 29, 0.32);
+  /* 墨の面（反転セクション） */
+  --koyori-sumi: #141217;
+  --koyori-sumi-2: #1d1a22;
+  --koyori-on-sumi: #ece8f0;
+  --koyori-on-sumi-2: #a8a0b4;
+  --koyori-sumi-line: rgba(236, 232, 240, 0.14);
+  /* 糸 */
   --koyori-lav: #c4b5df;
-  --koyori-lav-2: #dfd5f3;
   --koyori-lav-deep: #6e5c8f;
-  --koyori-on-lav: #231c31;
+  --koyori-lav-ink: #5a4880;
   --koyori-sage: #9fc2a9;
-  --koyori-sage-deep: #5f7a66;
+  --koyori-sage-deep: #536d5a;
+  --koyori-sage-ink: #46604d;
 
   --koyori-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  color-scheme: dark;
+  --gutter: 1.25rem;
+  color-scheme: light;
+}
+
+@media (width >= 40rem) {
+  :root {
+    --gutter: 2rem;
+  }
+}
+@media (width >= 64rem) {
+  :root {
+    --gutter: 3rem;
+  }
 }
 
 @theme inline {
   --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mincho: var(--font-mincho);
   --font-mono: var(--font-mono);
 
-  --color-bg: var(--koyori-bg);
-  --color-bg-2: var(--koyori-bg-2);
-  --color-bg-3: var(--koyori-bg-3);
+  --color-paper: var(--koyori-paper);
+  --color-paper-2: var(--koyori-paper-2);
+  --color-paper-3: var(--koyori-paper-3);
+  --color-ink: var(--koyori-ink);
+  --color-ink-2: var(--koyori-ink-2);
+  --color-ink-3: var(--koyori-ink-3);
   --color-line: var(--koyori-line);
   --color-line-strong: var(--koyori-line-strong);
-  --color-fg: var(--koyori-fg);
-  --color-fg-2: var(--koyori-fg-2);
-  --color-fg-3: var(--koyori-fg-3);
+  --color-sumi: var(--koyori-sumi);
+  --color-sumi-2: var(--koyori-sumi-2);
+  --color-on-sumi: var(--koyori-on-sumi);
+  --color-on-sumi-2: var(--koyori-on-sumi-2);
+  --color-sumi-line: var(--koyori-sumi-line);
   --color-lav: var(--koyori-lav);
-  --color-lav-2: var(--koyori-lav-2);
   --color-lav-deep: var(--koyori-lav-deep);
-  --color-on-lav: var(--koyori-on-lav);
+  --color-lav-ink: var(--koyori-lav-ink);
   --color-sage: var(--koyori-sage);
   --color-sage-deep: var(--koyori-sage-deep);
+  --color-sage-ink: var(--koyori-sage-ink);
 
   --ease-soft: var(--koyori-ease);
 }
@@ -56,6 +90,7 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    background-color: var(--koyori-paper);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -72,215 +107,301 @@
   }
 
   body {
-    background-color: var(--koyori-bg);
-    color: var(--koyori-fg);
+    background-color: var(--koyori-paper);
+    color: var(--koyori-ink);
     font-family: var(--font-sans);
-    font-feature-settings: 'ss01', 'cv11';
-    line-height: 1.7;
+    line-height: 1.75;
     overflow-wrap: anywhere;
     line-break: strict;
     -webkit-font-smoothing: antialiased;
+    font-kerning: normal;
   }
 
-  /* 画面全体に薄い粒子ノイズ */
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  /* 紙の繊維。画面全体にごく薄く掛ける */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    z-index: 60;
+    z-index: 70;
     pointer-events: none;
-    opacity: 0.07;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.16;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.03 0.22' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.42 0 0 0 0 0.38 0 0 0 1.4 -0.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
   }
 
   :focus-visible {
-    outline: 2px solid var(--koyori-lav-2);
+    outline: 2px solid var(--koyori-lav-ink);
     outline-offset: 3px;
-    border-radius: 2px;
+    border-radius: 1px;
+  }
+  .on-sumi :focus-visible {
+    outline-color: var(--koyori-lav);
   }
 
   ::selection {
     background-color: var(--koyori-lav);
-    color: var(--koyori-on-lav);
+    color: var(--koyori-ink);
   }
 }
 
 @utility container-site {
   width: 100%;
-  max-width: 80rem;
+  max-width: 84rem;
   margin-inline: auto;
-  padding-inline: 1.25rem;
-  @media (width >= 40rem) {
-    padding-inline: 2rem;
-  }
-  @media (width >= 64rem) {
-    padding-inline: 3rem;
-  }
+  padding-inline: var(--gutter);
 }
 
 /* 等幅の小さなラベル。「01 / TASK」のような使い方 */
 @utility label-mono {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  letter-spacing: 0.12em;
+  line-height: 1.5;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--koyori-fg-3);
+  color: var(--koyori-ink-3);
 }
 
-/* 見出し用。欧文は Space Grotesk、和文は Noto Sans JP が当たる */
+/* 欧文の見出し。Fraunces、和文は明朝に落ちる */
 @utility display {
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.02;
+  font-family: var(--font-serif);
+  font-weight: 420;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
   text-wrap: balance;
 }
 
+/* 和文の見出し。明朝 */
 @utility display-ja {
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.18;
+  word-break: auto-phrase;
+  font-family: var(--font-mincho);
+  font-weight: 560;
+  letter-spacing: 0.01em;
+  line-height: 1.24;
+  font-feature-settings: 'palt' 1;
 }
 
-/* ラベンダー → セージのグラデーション文字 */
-@utility text-gradient {
-  background: linear-gradient(
-    100deg,
-    var(--koyori-lav-2) 0%,
-    var(--koyori-lav) 40%,
-    var(--koyori-sage) 100%
+/* 縦組み */
+@utility tategaki {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  line-break: strict;
+  font-feature-settings: 'vpal' 1;
+}
+
+/* 撚った糸の見た目（縦方向の線に使う） */
+@utility thread {
+  background-color: var(--strand, var(--koyori-ink));
+  background-image: repeating-linear-gradient(
+    -58deg,
+    transparent 0 3px,
+    color-mix(in oklab, var(--strand, var(--koyori-ink)) 62%, black) 3px 5px
   );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* 罫線の細い枠 */
-@utility hairline {
-  border: 1px solid var(--koyori-line);
 }
 
 @layer components {
   .btn {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
-    min-height: 3rem;
-    padding: 0.6rem 1.4rem;
-    border-radius: 999px;
+    gap: 0.75rem;
+    min-height: 3.25rem;
+    padding: 0.7rem 1.5rem;
     font-family: var(--font-mono);
     font-size: 0.8125rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     text-decoration: none;
-    border: 1px solid transparent;
+    border: 1px solid var(--koyori-ink);
     transition:
-      background-color 180ms var(--koyori-ease),
-      border-color 180ms var(--koyori-ease),
-      color 180ms var(--koyori-ease),
-      transform 180ms var(--koyori-ease);
+      color 260ms var(--koyori-ease),
+      border-color 260ms var(--koyori-ease);
   }
-  .btn:active {
-    transform: scale(0.97);
+  /* ホバーで紙が裏から差し込まれるように色が入れ替わる */
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    transform: translateY(102%);
+    transition: transform 420ms var(--koyori-ease);
   }
   .btn-primary {
+    background-color: var(--koyori-ink);
+    color: var(--koyori-paper-3);
+  }
+  .btn-primary::before {
     background-color: var(--koyori-lav);
-    color: var(--koyori-on-lav);
   }
   .btn-ghost {
-    border-color: var(--koyori-line-strong);
-    color: var(--koyori-fg);
+    background-color: transparent;
+    color: var(--koyori-ink);
+  }
+  .btn-ghost::before {
+    background-color: var(--koyori-ink);
   }
   @media (hover: hover) and (pointer: fine) {
+    .btn:hover::before {
+      transform: translateY(0);
+    }
     .btn-primary:hover {
-      background-color: var(--koyori-lav-2);
+      color: var(--koyori-ink);
     }
     .btn-ghost:hover {
-      border-color: var(--koyori-lav);
-      color: var(--koyori-lav-2);
+      color: var(--koyori-paper-3);
     }
+  }
+  .btn:focus-visible::before {
+    transform: translateY(0);
+  }
+  .btn-primary:focus-visible {
+    color: var(--koyori-ink);
+  }
+  .btn-ghost:focus-visible {
+    color: var(--koyori-paper-3);
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .on-sumi .btn-primary {
+    background-color: var(--koyori-lav);
+    color: var(--koyori-ink);
+    border-color: var(--koyori-lav);
+  }
+  .on-sumi .btn-primary::before {
+    background-color: var(--koyori-paper-3);
   }
 
   /* 一覧の行。全体がリンク */
   .row-link {
     position: relative;
     display: block;
-    border-top: 1px solid var(--koyori-line);
+    border-top: 1px solid var(--koyori-line-strong);
     transition: background-color 240ms var(--koyori-ease);
   }
   .row-link:last-child {
-    border-bottom: 1px solid var(--koyori-line);
+    border-bottom: 1px solid var(--koyori-line-strong);
   }
   @media (hover: hover) and (pointer: fine) {
     .row-link:hover {
-      background-color: rgba(196, 181, 223, 0.05);
+      background-color: rgba(196, 181, 223, 0.22);
     }
+  }
+
+  /* 墨の面。上下の縁を紙を裂いたような形にする */
+  .sumi-sheet {
+    position: relative;
+    background-color: var(--koyori-sumi);
+    color: var(--koyori-on-sumi);
+  }
+  .sumi-sheet::before,
+  .sumi-sheet::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 18px;
+    background-color: var(--koyori-sumi);
+    pointer-events: none;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='18' viewBox='0 0 240 18' preserveAspectRatio='none'%3E%3Cpath d='M0 18V9L3 8.5L8 4.5L16 8.1L22 8.7L28 6.8L32 11.1L36 7.8L43 12.3L48 4.8L52 11.4L59 9.5L65 6.3L70 12L73 5.9L79 11.1L82 7.8L90 9.2L94 10.1L103 7.2L111 4.2L118 12.1L127 6.9L131 12L140 11.3L149 12L155 6.6L162 4.2L171 12.3L176 12.7L179 10.7L188 9.5L195 9.1L203 8.3L212 14L218 12.1L224 6.3L227 4.5L235 5.1L240 9V18z'/%3E%3C/svg%3E")
+      repeat-x 0 0 / 240px 18px;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='18' viewBox='0 0 240 18' preserveAspectRatio='none'%3E%3Cpath d='M0 18V9L3 8.5L8 4.5L16 8.1L22 8.7L28 6.8L32 11.1L36 7.8L43 12.3L48 4.8L52 11.4L59 9.5L65 6.3L70 12L73 5.9L79 11.1L82 7.8L90 9.2L94 10.1L103 7.2L111 4.2L118 12.1L127 6.9L131 12L140 11.3L149 12L155 6.6L162 4.2L171 12.3L176 12.7L179 10.7L188 9.5L195 9.1L203 8.3L212 14L218 12.1L224 6.3L227 4.5L235 5.1L240 9V18z'/%3E%3C/svg%3E")
+      repeat-x 0 0 / 240px 18px;
+  }
+  .sumi-sheet::before {
+    bottom: calc(100% - 1px);
+  }
+  .sumi-sheet::after {
+    top: calc(100% - 1px);
+    transform: scaleY(-1);
+    -webkit-mask-position: 97px 0;
+    mask-position: 97px 0;
+  }
+  .sumi-sheet.no-bottom::after {
+    display: none;
+  }
+
+  /* 本文中のインラインコード */
+  .code-inline {
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    padding: 0.05em 0.35em;
+    background-color: rgba(196, 181, 223, 0.32);
+    color: var(--koyori-ink);
+    border-radius: 2px;
   }
 }
 
 /* お知らせ本文（Markdown） */
 .prose {
   & > * + * {
-    margin-top: 1.1em;
+    margin-top: 1.15em;
   }
   & h2 {
     margin-top: 2.2em;
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.3;
-    color: var(--koyori-fg);
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 560;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+    color: var(--koyori-ink);
   }
   & h3 {
     margin-top: 1.6em;
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--koyori-fg);
+    color: var(--koyori-ink);
   }
   & strong {
-    color: var(--koyori-fg);
+    color: var(--koyori-ink);
     font-weight: 600;
   }
   & a {
-    color: var(--koyori-lav-2);
+    color: var(--koyori-lav-ink);
     text-decoration: underline;
     text-underline-offset: 0.25em;
-    text-decoration-color: var(--koyori-lav-deep);
+    text-decoration-thickness: 1px;
   }
   & a:hover {
-    text-decoration-color: currentColor;
+    text-decoration-thickness: 2px;
   }
   & ul,
   & ol {
     padding-left: 1.4em;
   }
   & ul {
-    list-style: disc;
+    list-style: '— ';
   }
   & ol {
     list-style: decimal;
   }
   & li::marker {
-    color: var(--koyori-sage);
+    color: var(--koyori-sage-ink);
+    font-family: var(--font-mono);
   }
   & li + li {
-    margin-top: 0.4em;
+    margin-top: 0.5em;
   }
   & code {
     font-family: var(--font-mono);
-    font-size: 0.875em;
-    padding: 0.1em 0.4em;
-    border-radius: 4px;
-    background-color: var(--koyori-bg-3);
-    color: var(--koyori-lav-2);
+    font-size: 0.86em;
+    padding: 0.05em 0.35em;
+    background-color: rgba(196, 181, 223, 0.32);
+    color: var(--koyori-ink);
   }
   & pre {
     padding: 1rem 1.25rem;
-    border-radius: 8px;
     overflow-x: auto;
-    background-color: var(--koyori-bg-2);
-    border: 1px solid var(--koyori-line);
+    background-color: var(--koyori-sumi);
+    color: var(--koyori-on-sumi);
   }
   & pre code {
     padding: 0;
@@ -289,12 +410,12 @@
   }
   & blockquote {
     padding-left: 1rem;
-    border-left: 2px solid var(--koyori-sage);
-    color: var(--koyori-fg-2);
+    border-left: 3px solid var(--koyori-sage);
+    color: var(--koyori-ink-2);
   }
   & hr {
     border: 0;
-    border-top: 1px solid var(--koyori-line);
+    border-top: 1px solid var(--koyori-line-strong);
   }
   & table {
     width: 100%;

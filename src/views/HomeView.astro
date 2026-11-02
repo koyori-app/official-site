@@ -1,19 +1,21 @@
 ---
 import type { Locale } from '../i18n/ui';
 import { formatDate, isoDate, localePath, t } from '../i18n/utils';
-import { githubOrg, products } from '../data/products';
+import { githubOrg } from '../data/products';
 import { getNews, newsSlug } from '../lib/news';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SectionHeading from '../components/SectionHeading.astro';
-import ProductRow from '../components/ProductRow.astro';
-import KoyoriScene from '../components/react/KoyoriScene';
+import HomeHero from '../components/home/HomeHero.astro';
+import TanzakuList from '../components/TanzakuList.astro';
+import RopeCanvas from '../components/home/RopeCanvas.astro';
 
 interface Props {
   lang: Locale;
 }
 const { lang } = Astro.props;
 const tr = t(lang);
+const display = lang === 'ja' ? 'display-ja' : 'display';
 
+const numerals = ['一', '二', '三', '四'];
 const principles = (['oss', 'selfhost', 'consistent', 'rust'] as const).map((key) => ({
   title: tr(`principles.${key}.title`),
   body: tr(`principles.${key}.body`),
@@ -23,140 +25,118 @@ const news = (await getNews(lang)).slice(0, 3);
 ---
 
 <BaseLayout lang={lang}>
-  <section class="relative isolate overflow-hidden">
-    <div class="absolute inset-0 -z-20" aria-hidden="true">
-      <div class="absolute inset-0 bg-[radial-gradient(60%_60%_at_75%_40%,rgba(110,92,143,0.35),transparent_70%)]"></div>
-      <KoyoriScene client:idle className="block h-full w-full" />
-      <div class="absolute inset-0 bg-linear-to-r from-bg via-bg/55 to-transparent md:via-bg/30"></div>
-      <div class="absolute inset-x-0 bottom-0 h-48 bg-linear-to-b from-transparent to-bg"></div>
-    </div>
+  <HomeHero lang={lang} />
 
-    <div class="container-site flex min-h-[calc(100svh-4rem)] flex-col justify-end pt-24 pb-14 sm:pb-20">
-      <p class="label-mono flex items-center gap-3">
-        <span class="h-px w-8 bg-sage" aria-hidden="true"></span>
-        {tr('hero.eyebrow')}
-      </p>
-      <h1
-        class:list={[
-          'mt-6 max-w-6xl text-fg text-[clamp(2.1rem,6.5vw,6rem)]',
-          lang === 'ja' ? 'display-ja' : 'display',
-        ]}
-      >
-        <span class="block">{tr('hero.title.1')}</span>
-        <span class="block text-gradient pb-[0.08em]">{tr('hero.title.2')}</span>
-      </h1>
-      <p class="mt-8 max-w-xl text-lg text-fg-2 sm:text-xl">{tr('hero.lead')}</p>
-      <div class="mt-10 flex flex-wrap gap-3">
-        <a href={localePath(lang, '/products/')} class="btn btn-primary">
-          {tr('hero.cta.products')}
-        </a>
-        <a href={githubOrg} rel="noopener" class="btn btn-ghost">
-          {tr('hero.cta.github')}
-          <span aria-hidden="true">↗</span>
-        </a>
-      </div>
-
-      <div class="mt-16 flex flex-wrap items-end justify-between gap-6 border-t border-line pt-6">
-        <ol class="flex flex-wrap gap-x-8 gap-y-2">
-          {products.map((product, i) => (
-            <li>
-              <a
-                href={localePath(lang, `/products/${product.slug}`)}
-                class="label-mono inline-flex items-center gap-2 transition-colors duration-150 hover:text-fg"
-              >
-                <span class="text-sage">{String(i + 1).padStart(2, '0')}</span>
-                {product.name.replace('Koyori ', '')}
-              </a>
-            </li>
-          ))}
-        </ol>
-        <p class="label-mono hidden sm:block" aria-hidden="true">
-          Scroll ↓
+  <TanzakuList lang={lang} labelledby="home-products">
+    <div slot="heading" class="flex flex-wrap items-end justify-between gap-x-10 gap-y-5">
+      <div>
+        <p class="label-mono inline-block bg-paper py-1 pr-3">
+          <span class="text-sage-ink">01</span> — {tr('products.eyebrow')}
         </p>
+        <h2
+          id="home-products"
+          class:list={['mt-3 text-[clamp(2.6rem,7vw,5.5rem)] text-ink', display]}
+        >
+          {tr('products.title')}
+        </h2>
+      </div>
+      <div class="max-w-sm bg-paper py-3 md:px-5">
+        <p class="text-ink-2">{tr('products.lead')}</p>
+        <a
+          href={localePath(lang, '/products/')}
+          class="label-mono mt-3 inline-flex min-h-10 items-center gap-2 text-ink underline-offset-4 hover:underline"
+        >
+          {tr('products.viewAll')} <span aria-hidden="true">→</span>
+        </a>
       </div>
     </div>
-  </section>
+  </TanzakuList>
 
-  <section class="container-site pt-24 pb-10 sm:pt-32" aria-labelledby="home-products">
-    <div class="flex flex-wrap items-end justify-between gap-6">
-      <SectionHeading
-        id="home-products"
-        index="01"
-        eyebrow="Products"
-        title={tr('products.title')}
-        lead={tr('products.lead')}
-        lang={lang}
-      />
-      <a href={localePath(lang, '/products/')} class="label-mono transition-colors hover:text-fg">
-        {tr('products.viewAll')} →
-      </a>
+  <section class="sumi-sheet on-sumi mt-24" aria-labelledby="home-principles">
+    <div class="container-site grid gap-14 py-24 sm:py-32 lg:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] lg:gap-20">
+      <header class="principles-head">
+        <p class="label-mono text-on-sumi-2">
+          <span class="text-sage">02</span> — {tr('principles.eyebrow')}
+        </p>
+        <h2
+          id="home-principles"
+          class:list={[
+            'principles-title mt-5 text-[clamp(2.6rem,7vw,5.5rem)] text-on-sumi',
+            display,
+          ]}
+        >
+          {tr('principles.title')}
+        </h2>
+        <p class="mt-6 max-w-xs text-on-sumi-2">{tr('principles.lead')}</p>
+      </header>
+      <ol class="grid gap-x-14 gap-y-16 sm:grid-cols-2">
+        {principles.map((item, i) => (
+          <li class:list={['principle relative', i % 2 === 1 && 'sm:translate-y-24']}>
+            <div class="flex items-end gap-4 border-b border-sumi-line pb-4">
+              <span class="principle-numeral" aria-hidden="true">
+                {numerals[i]}
+              </span>
+              <span class="label-mono pb-2 text-sage">{String(i + 1).padStart(2, '0')}</span>
+            </div>
+            <h3
+              class:list={[
+                'mt-6 text-2xl text-on-sumi sm:text-[1.7rem]',
+                lang === 'ja' ? 'display-ja' : 'display',
+              ]}
+            >
+              {item.title}
+            </h3>
+            <p class="mt-4 max-w-md text-on-sumi-2">{item.body}</p>
+          </li>
+        ))}
+      </ol>
     </div>
-    <ol class="mt-14">
-      {products.map((product, i) => (
-        <li>
-          <ProductRow product={product} lang={lang} index={i + 1} />
-        </li>
-      ))}
-    </ol>
+    <div class="h-16 sm:h-24" aria-hidden="true"></div>
   </section>
 
-  <section class="container-site py-24 sm:py-32" aria-labelledby="home-principles">
-    <SectionHeading
-      id="home-principles"
-      index="02"
-      eyebrow="Principles"
-      title={tr('principles.title')}
-      lead={tr('principles.lead')}
-      lang={lang}
-    />
-    <ol class="mt-14 grid gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-2">
-      {principles.map((item, i) => (
-        <li class="relative bg-bg-2 p-8 sm:p-10">
-          <span
-            class="display block text-6xl text-transparent sm:text-7xl"
-            style="-webkit-text-stroke: 1px var(--koyori-lav-deep);"
-            aria-hidden="true"
-          >
-            {String(i + 1).padStart(2, '0')}
-          </span>
-          <h3 class="mt-8 max-w-[16em] text-2xl font-semibold tracking-tight text-fg">
-            {item.title}
-          </h3>
-          <p class="mt-4 max-w-md text-fg-2">{item.body}</p>
-        </li>
-      ))}
-    </ol>
-  </section>
-
-  <section class="container-site pb-24" aria-labelledby="home-news">
+  <section class="container-site pt-32 pb-20" aria-labelledby="home-news">
     <div class="flex flex-wrap items-end justify-between gap-6">
-      <SectionHeading
-        id="home-news"
-        index="03"
-        eyebrow="News"
-        title={tr('news.title')}
-        lead={tr('news.lead')}
-        lang={lang}
-      />
-      <a href={localePath(lang, '/news/')} class="label-mono transition-colors hover:text-fg">
-        {tr('news.viewAll')} →
+      <div>
+        <p class="label-mono">
+          <span class="text-sage-ink">03</span> — News
+        </p>
+        <h2 id="home-news" class:list={['mt-3 text-[clamp(2.4rem,6vw,4.5rem)] text-ink', display]}>
+          {tr('news.title')}
+        </h2>
+      </div>
+      <a
+        href={localePath(lang, '/news/')}
+        class="label-mono inline-flex min-h-10 items-center gap-2 text-ink underline-offset-4 hover:underline"
+      >
+        {tr('news.viewAll')} <span aria-hidden="true">→</span>
       </a>
     </div>
     {news.length === 0 ? (
-      <p class="mt-10 text-fg-2">{tr('news.empty')}</p>
+      <p class="mt-10 text-ink-2">{tr('news.empty')}</p>
     ) : (
       <ul class="mt-12">
         {news.map((entry) => (
           <li>
             <a
               href={localePath(lang, `/news/${newsSlug(entry)}`)}
-              class="row-link group flex flex-col gap-2 py-6 sm:flex-row sm:items-baseline sm:gap-10"
+              class="row-link group grid gap-2 py-7 sm:grid-cols-[12rem_1fr_auto] sm:items-baseline sm:gap-10"
             >
-              <time datetime={isoDate(entry.data.date)} class="label-mono shrink-0 sm:w-40">
+              <time datetime={isoDate(entry.data.date)} class="label-mono">
                 {formatDate(entry.data.date, lang)}
               </time>
-              <span class="text-xl font-medium tracking-tight text-fg transition-colors group-hover:text-lav-2">
+              <span
+                class:list={[
+                  'text-xl text-ink sm:text-2xl',
+                  lang === 'ja' ? 'display-ja font-medium' : 'font-serif',
+                ]}
+              >
                 {entry.data.title}
+              </span>
+              <span
+                class="hidden font-mono text-ink-3 transition-transform duration-300 ease-soft group-hover:translate-x-1 sm:block"
+                aria-hidden="true"
+              >
+                →
               </span>
             </a>
           </li>
@@ -165,26 +145,51 @@ const news = (await getNews(lang)).slice(0, 3);
     )}
   </section>
 
-  <section class="container-site py-24 sm:py-32">
-    <div class="relative overflow-hidden rounded-3xl border border-line bg-bg-2 px-6 py-20 text-center sm:px-12 sm:py-28">
-      <div
-        class="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_80%_at_50%_120%,rgba(196,181,223,0.28),transparent_70%)]"
-        aria-hidden="true"
-      ></div>
-      <p class="label-mono relative">04 — Contribute</p>
-      <h2
-        class:list={[
-          'relative mt-5 text-[clamp(2.5rem,7vw,5.5rem)] text-gradient pb-[0.1em]',
-          lang === 'ja' ? 'display-ja' : 'display',
-        ]}
-      >
-        {tr('cta.title')}
-      </h2>
-      <p class="relative mx-auto mt-5 max-w-xl text-fg-2">{tr('cta.body')}</p>
-      <a href={githubOrg} rel="noopener" class="btn btn-primary relative mt-10">
-        {tr('cta.button')}
-        <span aria-hidden="true">↗</span>
-      </a>
+  <section class="cta relative" aria-labelledby="home-cta">
+    <div class="container-site grid gap-6 pt-16 pb-8 md:grid-cols-[minmax(0,1fr)_16rem] md:gap-10">
+      <div class="relative z-10 py-8 pr-16 md:py-20 md:pr-0">
+        <p class="label-mono">
+          <span class="text-sage-ink">04</span> — Contribute
+        </p>
+        <h2
+          id="home-cta"
+          class:list={['mt-5 max-w-[14em] text-[clamp(2.5rem,7.4vw,6.5rem)] text-ink', display]}
+        >
+          {tr('cta.title.home')}
+        </h2>
+        <p class="mt-6 max-w-lg text-lg text-ink-2">{tr('cta.body')}</p>
+        <a href={githubOrg} rel="noopener" class="btn btn-primary mt-10">
+          {tr('cta.button')}
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+      <RopeCanvas hint={tr('cta.hint')} />
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .principle-numeral {
+    font-family: var(--font-mincho);
+    font-size: clamp(3.5rem, 6vw, 5rem);
+    font-weight: 500;
+    line-height: 1;
+    color: var(--koyori-lav);
+  }
+  .principle:nth-child(even) .principle-numeral {
+    color: var(--koyori-sage);
+  }
+  @media (width >= 64rem) {
+    .principles-head {
+      position: sticky;
+      top: 7rem;
+      align-self: start;
+    }
+    .principles-title:lang(ja) {
+      writing-mode: vertical-rl;
+      font-size: clamp(4rem, 7vw, 6.5rem);
+      letter-spacing: 0.12em;
+      line-height: 1;
+    }
+  }
+</style>

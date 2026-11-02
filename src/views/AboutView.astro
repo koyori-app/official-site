@@ -9,7 +9,9 @@ interface Props {
 }
 const { lang } = Astro.props;
 const tr = t(lang);
+const display = lang === 'ja' ? 'display-ja' : 'display';
 
+const numerals = ['一', '二', '三'];
 const sections = (['what', 'how', 'contribute'] as const).map((key) => ({
   title: tr(`about.${key}.title`),
   body: tr(`about.${key}.body`),
@@ -17,32 +19,58 @@ const sections = (['what', 'how', 'contribute'] as const).map((key) => ({
 ---
 
 <BaseLayout lang={lang} title={tr('about.title')} description={tr('about.pageDescription')}>
-  <section class="container-site pt-20 pb-12 sm:pt-28">
-    <p class="label-mono">About</p>
-    <h1
-      class:list={[
-        'mt-4 max-w-4xl text-5xl text-fg sm:text-7xl',
-        lang === 'ja' ? 'display-ja' : 'display',
-      ]}
-    >
+  <section class="container-site pt-16 sm:pt-24">
+    <p class="label-mono">
+      <span class="text-sage-ink">—</span> About
+    </p>
+    <h1 class:list={['mt-4 max-w-5xl text-[clamp(3rem,9vw,8rem)] text-ink', display]}>
       {tr('about.title')}
     </h1>
-    <p class="mt-6 max-w-2xl text-xl text-fg-2">{tr('about.lead')}</p>
+    <div class="mt-14 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
+      <dl class="word">
+        <dt>
+          <span class="word-kanji" lang="ja">
+            紙縒り
+          </span>
+          <span class="label-mono text-lav-ink">ko·yo·ri</span>
+        </dt>
+        <dd class="mt-3 text-ink-2">{tr('footer.meaning')}</dd>
+      </dl>
+      <p
+        class:list={[
+          'text-2xl leading-[1.6] text-ink sm:text-3xl',
+          lang === 'ja' ? 'font-mincho' : 'font-serif',
+        ]}
+      >
+        {tr('about.lead')}
+      </p>
+    </div>
+  </section>
 
-    <ol class="mt-20">
+  <section class="container-site mt-24">
+    <ol class="about-list">
       {sections.map((section, i) => (
-        <li class="grid gap-4 border-t border-line py-10 last:border-b sm:grid-cols-[6rem_1fr] sm:gap-10 lg:grid-cols-[6rem_18rem_1fr]">
-          <span class="label-mono pt-1.5 text-sage">{String(i + 1).padStart(2, '0')}</span>
-          <h2 class="text-2xl font-semibold tracking-tight text-fg">{section.title}</h2>
-          <p class="max-w-2xl text-fg-2 lg:col-start-3">{section.body}</p>
+        <li class="about-item">
+          <span class="about-numeral" aria-hidden="true">
+            {numerals[i]}
+          </span>
+          <div class="about-head">
+            <span class="label-mono text-sage-ink">{String(i + 1).padStart(2, '0')}</span>
+            <h2 class:list={['mt-2 text-3xl text-ink', display]}>{section.title}</h2>
+          </div>
+          <p class="max-w-2xl text-ink-2 sm:text-lg">{section.body}</p>
         </li>
       ))}
     </ol>
+  </section>
 
-    <div class="mt-20 flex flex-wrap items-center justify-between gap-6 rounded-3xl border border-line bg-bg-2 p-8 sm:p-10">
+  <section class="container-site mt-28">
+    <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-8 border-t border-ink pt-12">
       <div>
-        <h2 class="text-2xl font-semibold tracking-tight text-fg">{tr('cta.title')}</h2>
-        <p class="mt-2 text-fg-2">{tr('cta.body')}</p>
+        <h2 class:list={['text-[clamp(2.4rem,6vw,4.5rem)] text-ink', display]}>
+          {tr('cta.title')}
+        </h2>
+        <p class="mt-4 max-w-lg text-ink-2">{tr('cta.body')}</p>
       </div>
       <a href={githubOrg} rel="noopener" class="btn btn-primary">
         {tr('cta.button')}
@@ -51,3 +79,54 @@ const sections = (['what', 'how', 'contribute'] as const).map((key) => ({
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .word {
+    padding: 1.5rem 0 0;
+    border-top: 1px solid var(--koyori-ink);
+  }
+  .word dt {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  .word-kanji {
+    font-family: var(--font-mincho);
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+  .about-item {
+    position: relative;
+    display: grid;
+    gap: 1rem;
+    padding-block: 2.5rem;
+    border-top: 1px solid var(--koyori-line-strong);
+  }
+  .about-item:last-child {
+    border-bottom: 1px solid var(--koyori-line-strong);
+  }
+  .about-numeral {
+    position: absolute;
+    right: 0;
+    top: 1.5rem;
+    font-family: var(--font-mincho);
+    font-weight: 500;
+    font-size: 4rem;
+    line-height: 1;
+    color: var(--koyori-lav);
+    pointer-events: none;
+  }
+  @media (width >= 64rem) {
+    .about-item {
+      grid-template-columns: 6rem minmax(0, 18rem) minmax(0, 1fr);
+      gap: 2.5rem;
+      align-items: start;
+    }
+    .about-numeral {
+      position: static;
+      font-size: 4.5rem;
+      margin-top: -0.4rem;
+    }
+  }
+</style>

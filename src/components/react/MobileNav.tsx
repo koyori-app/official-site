@@ -66,7 +66,7 @@ export default function MobileNav({ items, labels }: Props) {
         aria-controls={panelId}
         aria-label={open ? labels.close : labels.open}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line-strong text-fg transition-colors duration-150 hover:bg-bg-3"
+        className="inline-flex h-11 w-11 items-center justify-center border border-ink text-ink transition-colors duration-150 hover:bg-ink hover:text-paper-3"
       >
         {icon('M4 7h16M4 12h16M4 17h16')}
       </button>
@@ -82,40 +82,53 @@ export default function MobileNav({ items, labels }: Props) {
             className="fixed inset-0 z-50"
           >
             <div
-              className="absolute inset-0 bg-bg/60 backdrop-blur-[2px]"
+              className="absolute inset-0 bg-ink/40"
               onClick={() => setOpen(false)}
               aria-hidden="true"
             />
-            <div className="absolute inset-y-0 right-0 flex w-[min(20rem,85vw)] flex-col border-l border-line bg-bg-2 shadow-2xl">
-              <div className="flex h-16 items-center justify-between border-b border-line px-4">
+            <div className="absolute inset-y-0 right-0 flex w-[min(22rem,88vw)] flex-col bg-paper shadow-2xl">
+              {/* 紙縒りの帯。メニューの左端に沿わせる */}
+              <span
+                aria-hidden="true"
+                className="absolute inset-y-0 left-0 w-1.5"
+                style={{
+                  backgroundImage:
+                    'repeating-linear-gradient(-60deg, #c4b5df 0 6px, #9fc2a9 6px 10px, #6e5c8f 10px 14px, #536d5a 14px 18px)',
+                }}
+              />
+              <div className="flex h-16 items-center justify-between border-b border-line pr-4 pl-6">
                 <span className="label-mono">{labels.menu}</span>
                 <button
                   ref={closeRef}
                   type="button"
                   aria-label={labels.close}
                   onClick={() => setOpen(false)}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full text-fg transition-colors duration-150 hover:bg-bg-3"
+                  className="inline-flex h-11 w-11 items-center justify-center text-ink transition-colors duration-150 hover:bg-paper-2"
                 >
                   {icon('M6 6l12 12M18 6 6 18')}
                 </button>
               </div>
-              <nav aria-label={labels.menu} className="flex-1 overflow-y-auto p-3">
-                <ul className="flex flex-col gap-1">
+              <nav aria-label={labels.menu} className="flex-1 overflow-y-auto py-4 pr-4 pl-6">
+                <ul className="flex flex-col">
                   {items.map((item, i) => (
-                    <li key={item.href}>
+                    <li key={item.href} className="border-b border-line">
                       <a
                         href={item.href}
                         aria-current={item.current ? 'page' : undefined}
                         rel={item.external ? 'noopener' : undefined}
-                        className={`flex min-h-12 items-center gap-4 rounded-lg px-3 text-lg font-medium tracking-tight transition-colors duration-150 ${
-                          item.current ? 'bg-bg-3 text-fg' : 'text-fg-2 hover:bg-bg-3 hover:text-fg'
+                        className={`flex min-h-16 items-center gap-4 font-serif text-[1.65rem] leading-tight transition-colors duration-150 ${
+                          item.current ? 'text-lav-ink italic' : 'text-ink hover:text-lav-ink'
                         }`}
                       >
-                        <span className="label-mono w-6 text-sage">
+                        <span className="w-7 font-mono text-xs text-ink-3">
                           {String(i + 1).padStart(2, '0')}
                         </span>
                         <span className="flex-1">{item.label}</span>
-                        {item.external && <span aria-hidden="true">↗</span>}
+                        {item.external && (
+                          <span aria-hidden="true" className="font-mono text-base">
+                            ↗
+                          </span>
+                        )}
                       </a>
                     </li>
                   ))}

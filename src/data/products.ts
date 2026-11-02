@@ -22,8 +22,11 @@ export interface Product {
   status: ProductStatus;
   repo: string;
   links: ProductLink[];
-  /** カードの装飾色 */
-  tone: 'lavender' | 'sage';
+  /**
+   * 紙縒りの糸の色。トップの WebGL、短冊、プロダクトページのモチーフで使う。
+   * onStrand はその色の上に載せる文字色（コントラスト AA を満たす組み合わせ）。
+   */
+  strand: { color: string; onStrand: 'ink' | 'paper' };
 }
 
 export const githubOrg = 'https://github.com/koyori-app';
@@ -67,7 +70,7 @@ export const products: Product[] = [
       { label: { ja: 'iOS 版', en: 'iOS app' }, href: `${githubOrg}/task-ios` },
       { label: { ja: 'Android 版', en: 'Android app' }, href: `${githubOrg}/task-android` },
     ],
-    tone: 'lavender',
+    strand: { color: '#c4b5df', onStrand: 'ink' },
   },
   {
     slug: 'vrt',
@@ -103,7 +106,7 @@ export const products: Product[] = [
     status: 'development',
     repo: `${githubOrg}/vrt`,
     links: [{ label: { ja: 'VRT Actions', en: 'VRT Actions' }, href: `${githubOrg}/vrt-actions` }],
-    tone: 'sage',
+    strand: { color: '#9fc2a9', onStrand: 'ink' },
   },
   {
     slug: 'ui',
@@ -142,7 +145,7 @@ export const products: Product[] = [
         href: 'https://www.npmjs.com/package/@koyori-app/ui-vue',
       },
     ],
-    tone: 'lavender',
+    strand: { color: '#6e5c8f', onStrand: 'paper' },
   },
   {
     slug: 'arc',
@@ -176,7 +179,7 @@ export const products: Product[] = [
     status: 'alpha',
     repo: `${githubOrg}/arc`,
     links: [],
-    tone: 'sage',
+    strand: { color: '#536d5a', onStrand: 'paper' },
   },
 ];
 

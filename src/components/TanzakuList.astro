@@ -1,0 +1,370 @@
+---
+import type { Locale } from '../i18n/ui';
+import { localePath, t } from '../i18n/utils';
+import { products } from '../data/products';
+import StatusBadge from './StatusBadge.astro';
+
+interface Props {
+  lang: Locale;
+  headingLevel?: 2 | 3;
+  /**
+   * home: 糸はセクションの上端（＝ヒーローの下端）から垂れる。WebGL の糸の続き。
+   * bar: 糸は一覧の上に張った紙縒りから垂れる。
+   */
+  variant?: 'home' | 'bar';
+  labelledby?: string;
+}
+const { lang, headingLevel = 3, variant = 'home', labelledby } = Astro.props;
+const tr = t(lang);
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const hasHeading = Astro.slots.has('heading');
+---
+
+<section class:list={['tz-wrap', `tz-variant-${variant}`]} aria-labelledby={labelledby}>
+  {variant === 'bar' && <div class="tz-bar" aria-hidden="true" />}
+  {hasHeading && (
+    <div class="tz-heading container-site">
+      <slot name="heading" />
+    </div>
+  )}
+  <ol class:list={['tz-list container-site', !hasHeading && 'tz-list-bare']}>
+    {products.map((product, i) => (
+      <li
+        class="tz-item"
+        style={`--i: ${i}; --strand: ${product.strand.color}; --on: var(${product.strand.onStrand === 'ink' ? '--koyori-ink' : '--koyori-paper-3'});`}
+      >
+        <a href={localePath(lang, `/products/${product.slug}`)} class="tz">
+          <span class="tz-hole" aria-hidden="true" />
+          <span class="tz-head">
+            <span class="tz-num">{String(i + 1).padStart(2, '0')}</span>
+            <StatusBadge status={product.status} lang={lang} tone="inherit" />
+          </span>
+          <span class="tz-body">
+            <Heading class="tz-name">
+              <span class="tz-brand">Koyori</span>
+              <span class="tz-product">{product.name.replace('Koyori ', '')}</span>
+            </Heading>
+            <span class:list={['tz-tagline', lang === 'ja' && 'tz-tagline-ja']}>
+              {product.tagline[lang]}
+            </span>
+          </span>
+          <span class="tz-stack">{product.stack.join(' · ')}</span>
+          <span class="tz-more">
+            {tr('product.detail')}
+            <span aria-hidden="true">→</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .tz-wrap {
+    --spine: calc(var(--gutter) * 0.5);
+    --hole: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 2rem;
+  }
+  .tz-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 12px;
+    background-image: repeating-linear-gradient(
+      -62deg,
+      var(--koyori-lav) 0 7px,
+      var(--koyori-sage) 7px 12px,
+      var(--koyori-lav-deep) 12px 17px,
+      var(--koyori-sage-deep) 17px 22px
+    );
+    box-shadow: 0 6px 10px -6px rgba(24, 22, 29, 0.45);
+    z-index: 2;
+  }
+  .tz-heading {
+    position: relative;
+    z-index: 2;
+    padding-left: calc(var(--gutter) + 2.6rem);
+    padding-top: 3rem;
+  }
+  .tz-bar + .tz-heading {
+    padding-top: 2.5rem;
+  }
+
+  .tz-list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 2.5rem;
+  }
+  .tz-list-bare {
+    margin-top: 0;
+    padding-top: 4rem;
+  }
+  .tz-item {
+    position: relative;
+    padding-left: 2.6rem;
+    padding-bottom: 1.25rem;
+  }
+  /* 糸。上へ長く伸ばし、セクションの上端で切る */
+  .tz-item::before,
+  .tz-item::after {
+    content: '';
+    position: absolute;
+    background-color: var(--strand);
+    background-image: repeating-linear-gradient(
+      -58deg,
+      transparent 0 3px,
+      color-mix(in oklab, var(--strand) 60%, black) 3px 5px
+    );
+    pointer-events: none;
+  }
+  .tz-item::before {
+    z-index: 1;
+    left: calc(var(--spine) - var(--gutter) + var(--i) * 7px);
+    width: 3px;
+    bottom: calc(100% - var(--hole) - 1.5px);
+    height: 400vh;
+  }
+  .tz-item::after {
+    left: calc(var(--spine) - var(--gutter) + var(--i) * 7px);
+    top: calc(var(--hole) - 1.5px);
+    height: 3px;
+    width: calc(2.6rem + 1.1rem - (var(--spine) - var(--gutter) + var(--i) * 7px));
+    z-index: 1;
+  }
+
+  .tz {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.25rem 1rem;
+    padding: 1rem 1.25rem 1.25rem 2.4rem;
+    background-color: var(--strand);
+    color: var(--on);
+    text-decoration: none;
+    transform-origin: 1.1rem var(--hole);
+    box-shadow:
+      0 1px 0 rgba(24, 22, 29, 0.06),
+      0 22px 30px -24px rgba(24, 22, 29, 0.55);
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% calc(100% - 4px),
+      92% 100%,
+      78% calc(100% - 3px),
+      61% 100%,
+      44% calc(100% - 4px),
+      27% 100%,
+      12% calc(100% - 2px),
+      0 100%
+    );
+  }
+  .tz-hole {
+    position: absolute;
+    left: calc(1.1rem - 5px);
+    top: calc(var(--hole) - 5px);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--koyori-paper);
+    box-shadow: inset 0 1px 2px rgba(24, 22, 29, 0.5);
+  }
+  .tz-head {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+  }
+  .tz-body {
+    grid-column: 1 / -1;
+    display: block;
+    margin-top: 0.5rem;
+  }
+  .tz-name {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    line-height: 1;
+  }
+  .tz-brand {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .tz-product {
+    font-family: var(--font-serif);
+    font-size: 2.6rem;
+    font-weight: 430;
+    letter-spacing: -0.03em;
+    font-style: italic;
+  }
+  .tz-tagline {
+    display: block;
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+  .tz-tagline-ja {
+    font-family: var(--font-mincho);
+    font-weight: 500;
+    word-break: auto-phrase;
+  }
+  .tz-stack {
+    grid-column: 1 / 2;
+    margin-top: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+  }
+  .tz-more {
+    grid-column: 2 / 3;
+    align-self: end;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  @keyframes swing {
+    0% {
+      transform: rotate(0deg);
+    }
+    18% {
+      transform: rotate(2.4deg);
+    }
+    42% {
+      transform: rotate(-1.7deg);
+    }
+    66% {
+      transform: rotate(0.9deg);
+    }
+    84% {
+      transform: rotate(-0.35deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .tz:hover {
+      animation: swing 1.5s var(--koyori-ease);
+    }
+    .tz:hover .tz-more {
+      text-decoration: underline;
+      text-underline-offset: 0.3em;
+    }
+  }
+  .tz:focus-visible {
+    animation: swing 1.5s var(--koyori-ease);
+    outline-offset: 4px;
+  }
+
+  /* デスクトップ: 4 本の短冊が、ヒーローの 4 本の糸の真下に吊られる */
+  @media (width >= 48rem) {
+    .tz-wrap {
+      --hole: 1.6rem;
+      padding-bottom: 4rem;
+    }
+    .tz-heading {
+      padding-left: var(--gutter);
+      padding-top: 4.5rem;
+    }
+    .tz-list {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      column-gap: 2rem;
+      align-items: start;
+      margin-top: 3rem;
+    }
+    .tz-item {
+      padding-left: 0;
+      padding-bottom: 0;
+      padding-top: var(--drop, 0rem);
+    }
+    .tz-item:nth-child(1) {
+      --drop: 0rem;
+    }
+    .tz-item:nth-child(2) {
+      --drop: 5.5rem;
+    }
+    .tz-item:nth-child(3) {
+      --drop: 2rem;
+    }
+    .tz-item:nth-child(4) {
+      --drop: 8rem;
+    }
+    .tz-item::before {
+      left: calc(50% - 1.5px);
+      bottom: calc(100% - var(--drop) - var(--hole) - 1.5px);
+    }
+    .tz-item::after {
+      display: none;
+    }
+    .tz {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto 1fr auto auto;
+      min-height: 34rem;
+      padding: 3rem 1.25rem 1.5rem;
+      transform-origin: 50% var(--hole);
+    }
+    .tz-hole {
+      left: calc(50% - 5px);
+    }
+    .tz-head {
+      grid-column: 1;
+    }
+    .tz-body {
+      grid-column: 1;
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      min-height: 20rem;
+    }
+    .tz-name {
+      writing-mode: vertical-rl;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 0.4rem;
+    }
+    .tz-product {
+      font-size: clamp(2.6rem, 4.4vw, 4rem);
+    }
+    .tz-tagline {
+      margin-top: 0;
+      font-size: 1.0625rem;
+      max-width: 13rem;
+    }
+    .tz-tagline-ja {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      max-width: none;
+      max-height: 19rem;
+      font-size: 1.125rem;
+      line-height: 1.9;
+      letter-spacing: 0.06em;
+    }
+    .tz-stack {
+      grid-column: 1;
+      margin-top: 1.5rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid currentColor;
+    }
+    .tz-more {
+      grid-column: 1;
+      margin-top: 0.6rem;
+    }
+  }
+</style>

@@ -35,8 +35,10 @@ src/
   data/        products.ts にプロダクトの情報（名前・説明・リンク・ライセンス）
   content/     news/<lang>/<slug>.md にお知らせ
   layouts/     BaseLayout.astro（head のメタ情報、hreflang、OGP、ヘッダー・フッター）
-  components/  Astro コンポーネントと react/ の React islands（モバイルナビ、WebGL のヒーロー）
-               ProductGlyph.astro にプロダクトごとの線画アイコン
+  components/  Astro コンポーネント。home/ にトップのヒーローと紐、product/ にプロダクトページのモチーフ、
+               react/ に React island（モバイルナビ）。TanzakuList.astro は 4 枚の短冊
+  scripts/     ブラウザで動く TypeScript。koyori/ に WebGL のヒーロー（three.js とシェーダー）、
+               cord2d.ts / rope.ts / motifs.ts に 2D canvas の紐とモチーフ
   views/       各ページの本体。言語を props で受け取る
   pages/       ルーティング。日本語は直下、英語は en/ 配下で同じ構成。中身は views を呼ぶだけ
   styles/      global.css（Tailwind とデザイントークン、ボタン、お知らせ本文の見た目）
@@ -71,11 +73,25 @@ translationKey: slug # 日英で同じ値にすると記事ページで相互リ
 
 ### OG 画像
 
-`public/og.png`（1200×630）はトップのヒーローを 1200×694 のビューポートで開き、ヘッダー分の 64px を除いて撮ったものです。ヒーローの文言や見た目を変えたら撮り直してください。
+`public/og.png`（1200×630）はトップのヒーローを 1200×694 のビューポートで開き、WebGL の準備ができてから（`canvas[data-ready="true"]`）ヘッダー分の 64px を除いて撮ったものです。ヒーローの文言や見た目を変えたら撮り直してください。
+
+### デザインの考え方
+
+紙縒り（こより）は、細く切った紙を撚り合わせてつくる紐です。サイトは「生成りの紙」と「墨」を地にし、ラベンダーとセージを 4 本の糸（Task / VRT / UI / Arc）の色にしています（`src/data/products.ts` の `strand`）。
+
+- トップのヒーローでは、4 色の紙の帯が撚られた紐が紙面を縫うように出入りし、見出しの文字をくぐったり越えたりしたあと、4 本の糸にほどけて画面下の各プロダクトへ向かう
+- その糸は CSS の線としてそのまま下のセクションへ続き、4 枚の短冊（`TanzakuList.astro`）を吊る。スマートフォンでは左端に束ねて流す
+- 各プロダクトページには、そのプロダクトの糸の色で描く小さな 2D canvas のモチーフ（織り、差分、分岐、依存の弧）を置く
 
 ### WebGL について
 
-ヒーローの帯は `client:idle` で読み込む React island の中で three.js を動的 import しています。three.js の chunk は gzip で約 180 KB あり、トップ以外のページでは読み込みません。`prefers-reduced-motion` のときは 1 フレームだけ描いて止め、画面外ではループを止めます。WebGL が使えない環境では背景のグラデーションだけになります。
+ヒーローは `src/components/home/HomeHero.astro` の `<script>` から、ブラウザが暇になったところで `src/scripts/koyori/scene.ts` を動的 import します。three.js を含むこの chunk は gzip で約 135 KB あり、トップ以外のページでは読み込みません。
+
+- 紐の形はすべて頂点シェーダー（`src/scripts/koyori/shaders.ts`）で計算します。同じ形を「本体」「紙に落ちる影」「紙の裏に透ける色」の 3 通りに描きます
+- 紐の始点・ほどける点・4 本の出口は DOM の目印（`data-gl-anchor` / `data-gl-exit`）から読むので、レイアウトは CSS 側で調整できます
+- 見出し（`data-gl-text`）は 2D canvas に描いて紙面のテクスチャに刷り、紐と前後関係を持たせます。DOM の見出しは読み上げ・選択のために残し、WebGL の準備ができたら文字色だけ透明にします
+- `prefers-reduced-motion` のときは 1 フレームだけ描いて止め、画面外ではループを止めます。DPR は最大 2 です
+- WebGL が使えない環境では、同じ構図の SVG の紐を表示します
 
 ## デプロイと独自ドメイン
 

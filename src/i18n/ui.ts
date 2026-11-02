@@ -32,15 +32,21 @@ const ja = {
   'locale.label': '言語',
 
   'hero.eyebrow': 'Open source tools for software teams',
-  'hero.title.1': '開発チームの毎日を、',
-  'hero.title.2': '少し軽くする。',
+  'hero.word': '紙縒り',
+  'hero.reading': 'ko·yo·ri',
+  'hero.meaning': '細く切った紙を撚り合わせてつくる紐。',
+  'hero.title.1': '小さな道具を、',
+  'hero.title.2': '撚り合わせる。',
   'hero.lead':
-    'Koyori は、タスク管理、ビジュアルリグレッションテスト、UI ライブラリ、ガントチャートのレンダラーなど、開発チームの日常に寄り添う小さなツール群をオープンソースで作っています。',
+    'Koyori は、タスク管理、ビジュアルリグレッションテスト、UI ライブラリ、ガントチャートのレンダラー。開発チームの日常に寄り添う小さな道具を、オープンソースで作っています。',
   'hero.cta.products': 'プロダクトを見る',
   'hero.cta.github': 'GitHub で見る',
+  'hero.scroll': '糸をたどる',
 
   'products.title': 'プロダクト',
+  'products.eyebrow': '一本の紐、四本の糸',
   'products.lead': 'それぞれ単独で使え、組み合わせるとつながるツール群です。',
+  'products.glance': '一覧で比べる',
   'products.viewAll': 'すべてのプロダクト',
   'products.pageDescription':
     'Koyori が開発しているプロダクトの一覧。Task、VRT、UI、Arc の 4 つを紹介します。',
@@ -58,6 +64,7 @@ const ja = {
   'product.status.alpha': 'アルファ',
 
   'principles.title': 'つくりかた',
+  'principles.eyebrow': '撚りの向きをそろえる',
   'principles.lead': '4 つのプロダクトで共通している考え方です。',
   'principles.oss.title': 'すべてオープンソース',
   'principles.oss.body':
@@ -94,14 +101,19 @@ const ja = {
   'about.pageDescription': 'Koyori の紹介。なにを、どう作っているか、参加の方法。',
 
   'cta.title': '一緒につくりませんか',
+  'cta.title.home': 'あなたの一本も、撚り合わせて。',
   'cta.body': 'すべてのコードは GitHub で公開しています。Issue や Pull Request を歓迎します。',
   'cta.button': 'koyori-app on GitHub',
+  'cta.hint': '糸は引っぱれます',
 
   'footer.tagline': '開発チームのための、小さなオープンソースの道具。',
+  'footer.meaning':
+    '紙縒り（こより）: 細く切った紙を撚り合わせてつくる紐。一本ずつは細くても、撚ると強くなる。',
   'footer.products': 'プロダクト',
   'footer.site': 'サイト',
   'footer.rights': '© 2026 Koyori',
 
+  'notfound.eyebrow': '糸がここで途切れています',
   'notfound.title': 'ページが見つかりません',
   'notfound.body': 'お探しのページは移動したか、削除された可能性があります。',
   'notfound.home': 'トップへ戻る',
@@ -131,15 +143,21 @@ const en: Record<UIKey, string> = {
   'locale.label': 'Language',
 
   'hero.eyebrow': 'Open source tools for software teams',
-  'hero.title.1': 'Tools that make a dev team’s day',
-  'hero.title.2': 'a little lighter.',
+  'hero.word': '紙縒り',
+  'hero.reading': 'ko·yo·ri',
+  'hero.meaning': 'A cord made by twisting thin strips of paper.',
+  'hero.title.1': 'Small tools,',
+  'hero.title.2': 'twisted together.',
   'hero.lead':
     'Koyori builds small, focused open-source tools for the daily work of software teams: task management, visual regression testing, a UI library, and a Gantt chart renderer.',
   'hero.cta.products': 'Explore products',
   'hero.cta.github': 'View on GitHub',
+  'hero.scroll': 'Follow the thread',
 
   'products.title': 'Products',
+  'products.eyebrow': 'One cord, four strands',
   'products.lead': 'Each tool stands on its own, and they fit together.',
+  'products.glance': 'At a glance',
   'products.viewAll': 'All products',
   'products.pageDescription': 'The products Koyori is building: Task, VRT, UI, and Arc.',
 
@@ -156,6 +174,7 @@ const en: Record<UIKey, string> = {
   'product.status.alpha': 'Alpha',
 
   'principles.title': 'How we build',
+  'principles.eyebrow': 'Twisted the same way',
   'principles.lead': 'Four products, one set of principles.',
   'principles.oss.title': 'Open source, all of it',
   'principles.oss.body':
@@ -192,14 +211,19 @@ const en: Record<UIKey, string> = {
   'about.pageDescription': 'What Koyori is, how we build it, and how to get involved.',
 
   'cta.title': 'Build with us',
+  'cta.title.home': 'Twist in a strand of your own.',
   'cta.body': 'All of our code is on GitHub. Issues and pull requests are welcome.',
   'cta.button': 'koyori-app on GitHub',
+  'cta.hint': 'Go on, tug the thread',
 
   'footer.tagline': 'Small open-source tools for software teams.',
+  'footer.meaning':
+    'Koyori (紙縒り): a cord made by twisting thin strips of paper. Each strip is thin; twisted together, they hold.',
   'footer.products': 'Products',
   'footer.site': 'Site',
   'footer.rights': '© 2026 Koyori',
 
+  'notfound.eyebrow': 'The thread ends here',
   'notfound.title': 'Page not found',
   'notfound.body': 'The page you are looking for may have moved or been removed.',
   'notfound.home': 'Back to home',

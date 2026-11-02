@@ -43,6 +43,9 @@ const ogImage = new URL('/og.png', site);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
     <title>{fullTitle}</title>
     <meta name="description" content={metaDescription} />
     <link rel="canonical" href={canonical.href} />
@@ -58,7 +61,7 @@ const ogImage = new URL('/og.png', site);
     )}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta name="theme-color" content="#0e0d12" />
+    <meta name="theme-color" content="#f1ece2" />
     <meta name="generator" content={Astro.generator} />
 
     <meta property="og:type" content={ogType} />
@@ -83,12 +86,12 @@ const ogImage = new URL('/og.png', site);
   <body class="flex min-h-dvh flex-col">
     <a
       href="#main"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-full focus:bg-lav focus:px-4 focus:py-2 focus:font-semibold focus:text-on-lav"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[80] focus:bg-ink focus:px-4 focus:py-2 focus:font-mono focus:text-sm focus:text-paper-3"
     >
       {tr('skip')}
     </a>
     <SiteHeader lang={lang} switchTargets={switchTargets} />
-    <main id="main" class="flex-1">
+    <main id="main" class="min-w-0 flex-1">
       <slot />
     </main>
     <SiteFooter lang={lang} />

@@ -36,30 +36,33 @@ const mobileItems = [
 ];
 ---
 
-<header class="sticky top-0 z-40 border-b border-line bg-bg/70 backdrop-blur-md">
+<header class="sticky top-0 z-40 border-b border-line bg-paper/85 backdrop-blur-md">
   <div class="container-site flex h-16 items-center justify-between gap-4">
     <a
       href={localePath(lang, '/')}
-      class="flex items-center gap-3 text-fg"
+      class="group flex min-h-11 items-center gap-3 text-ink"
       aria-label={tr('site.name')}
     >
-      <LogoMark class="h-7 w-7" />
-      <span class="text-lg font-semibold tracking-tight">Koyori</span>
+      <LogoMark class="h-7 w-7 transition-transform duration-500 ease-soft group-hover:rotate-[-12deg]" />
+      <span class="font-serif text-[1.35rem] leading-none tracking-tight italic">Koyori</span>
     </a>
 
     <nav aria-label={tr('nav.primary')} class="hidden md:block">
-      <ul class="flex items-center gap-7">
-        {nav.map((item) => (
+      <ul class="flex items-center gap-8">
+        {nav.map((item, i) => (
           <li>
             <a
               href={item.href}
               aria-current={item.current ? 'page' : undefined}
               class:list={[
-                'label-mono inline-flex min-h-9 items-center border-b transition-colors duration-150 hover:text-fg',
-                item.current ? 'border-lav text-fg' : 'border-transparent',
+                'nav-link inline-flex min-h-10 items-center gap-2 text-sm text-ink',
+                item.current && 'is-current',
               ]}
             >
-              {item.label}
+              <span class="font-mono text-[0.6875rem] text-ink-3">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <span>{item.label}</span>
             </a>
           </li>
         ))}
@@ -67,7 +70,7 @@ const mobileItems = [
           <a
             href={githubOrg}
             rel="noopener"
-            class="label-mono inline-flex min-h-9 items-center gap-1 transition-colors duration-150 hover:text-fg"
+            class="nav-link inline-flex min-h-10 items-center gap-1 text-sm text-ink"
           >
             {tr('nav.github')}
             <span aria-hidden="true">↗</span>
@@ -76,7 +79,7 @@ const mobileItems = [
       </ul>
     </nav>
 
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2">
       <LocaleSwitch lang={lang} targets={switchTargets} />
       <div class="md:hidden">
         <MobileNav
@@ -88,3 +91,31 @@ const mobileItems = [
     </div>
   </div>
 </header>
+
+<style>
+  .nav-link {
+    position: relative;
+  }
+  /* 現在地と hover に、撚った糸の下線 */
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.35rem;
+    height: 3px;
+    background-image: repeating-linear-gradient(
+      -60deg,
+      var(--koyori-lav) 0 4px,
+      var(--koyori-sage-deep) 4px 6px
+    );
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 360ms var(--koyori-ease);
+  }
+  .nav-link:hover::after,
+  .nav-link.is-current::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+</style>

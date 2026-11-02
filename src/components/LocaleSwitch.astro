@@ -11,9 +11,14 @@ const tr = t(lang);
 ---
 
 <nav aria-label={tr('locale.label')}>
-  <ul class="flex items-center gap-1 rounded-full border border-line p-1">
-    {locales.map((locale) => (
-      <li>
+  <ul class="flex items-center font-mono text-xs tracking-[0.1em]">
+    {locales.map((locale, i) => (
+      <li class="flex items-center">
+        {i > 0 && (
+          <span class="px-0.5 text-ink-3" aria-hidden="true">
+            /
+          </span>
+        )}
         <a
           href={targets[locale]}
           hreflang={locale}
@@ -21,11 +26,13 @@ const tr = t(lang);
           aria-label={localeNames[locale]}
           aria-current={locale === lang ? 'true' : undefined}
           class:list={[
-            'label-mono inline-flex h-7 items-center rounded-full px-2.5 transition-colors duration-150',
-            locale === lang ? 'bg-fg text-bg' : 'hover:text-fg',
+            'inline-flex h-10 min-w-10 items-center justify-center px-1.5 uppercase transition-colors duration-150',
+            locale === lang
+              ? 'text-ink underline decoration-2 underline-offset-[6px]'
+              : 'text-ink-3 hover:text-ink',
           ]}
         >
-          {locale.toUpperCase()}
+          {locale}
         </a>
       </li>
     ))}

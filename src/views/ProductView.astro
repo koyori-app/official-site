@@ -4,7 +4,7 @@ import { localePath, t } from '../i18n/utils';
 import { products, type Product } from '../data/products';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProductCard from '../components/ProductCard.astro';
-import ProductGlyph from '../components/ProductGlyph.astro';
+import ProductMotif from '../components/product/ProductMotif.astro';
 import StatusBadge from '../components/StatusBadge.astro';
 import ExternalIcon from '../components/ExternalIcon.astro';
 
@@ -16,8 +16,7 @@ const { lang, product } = Astro.props;
 const tr = t(lang);
 const others = products.filter((p) => p.slug !== product.slug);
 const index = products.findIndex((p) => p.slug === product.slug) + 1;
-const tone = product.tone === 'sage' ? 'text-sage' : 'text-lav';
-const glowColor = product.tone === 'sage' ? 'rgba(159,194,169,0.28)' : 'rgba(196,181,223,0.3)';
+const short = product.name.replace('Koyori ', '');
 
 /** `code` を <code> にする */
 function inlineCode(text: string): string {
@@ -25,48 +24,48 @@ function inlineCode(text: string): string {
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(
-      /`([^`]+)`/g,
-      '<code class="rounded bg-bg-3 px-1.5 py-0.5 font-mono text-[0.85em] text-lav-2">$1</code>',
-    );
+    .replace(/`([^`]+)`/g, '<code class="code-inline">$1</code>');
 }
 ---
 
 <BaseLayout lang={lang} title={product.name} description={product.tagline[lang]}>
-  <section class="relative isolate overflow-hidden">
-    <div
-      class="pointer-events-none absolute inset-0 -z-10"
-      style={`background: radial-gradient(45% 60% at 80% 40%, ${glowColor}, transparent 70%);`}
-      aria-hidden="true"
-    ></div>
-    <div class="container-site grid items-center gap-12 pt-20 pb-16 sm:pt-28 lg:grid-cols-[1fr_20rem]">
-      <div>
+  <div class="product-page" style={`--strand: ${product.strand.color};`}>
+    <span class="product-spine thread" aria-hidden="true"></span>
+
+    <section class="container-site product-hero">
+      <div class="product-hero-text">
         <nav aria-label="Breadcrumb" class="label-mono">
           <ol class="flex flex-wrap items-center gap-3">
             <li>
-              <a href={localePath(lang, '/products/')} class="transition-colors hover:text-fg">
+              <a
+                href={localePath(lang, '/products/')}
+                class="inline-flex min-h-10 items-center hover:text-ink hover:underline"
+              >
                 {tr('products.title')}
               </a>
             </li>
-            <li aria-hidden="true" class="text-sage">
-              /
+            <li aria-hidden="true">/</li>
+            <li aria-current="page" class="text-ink">
+              {`${String(index).padStart(2, '0')} ${short}`}
             </li>
-            <li aria-current="page">{String(index).padStart(2, '0')}</li>
           </ol>
         </nav>
-        <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
-          <h1 class="display text-5xl text-fg sm:text-7xl">{product.name}</h1>
-          <StatusBadge status={product.status} lang={lang} />
-        </div>
-        <p
-          class:list={[
-            'mt-6 max-w-2xl text-2xl text-fg-2 sm:text-3xl',
-            lang === 'ja' ? 'display-ja font-normal' : 'tracking-tight',
-          ]}
-        >
+
+        <h1 class="product-title">
+          <span class="product-title-brand">Koyori</span>
+          <span class="product-title-name">{short}</span>
+        </h1>
+
+        <p class:list={['product-tagline', lang === 'ja' ? 'display-ja' : 'font-serif']}>
           {product.tagline[lang]}
         </p>
-        <div class="mt-10 flex flex-wrap gap-3">
+
+        <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <StatusBadge status={product.status} lang={lang} class="text-ink" />
+          <span class="font-mono text-xs tracking-[0.06em] text-ink-2">{product.license}</span>
+        </div>
+
+        <div class="mt-9 flex flex-wrap gap-3">
           <a href={product.repo} rel="noopener" class="btn btn-primary">
             {tr('product.repo')}
             <ExternalIcon />
@@ -79,84 +78,218 @@ function inlineCode(text: string): string {
           ))}
         </div>
       </div>
-      <div class="hidden justify-center lg:flex">
-        <ProductGlyph
-          slug={product.slug}
-          class:list={['h-64 w-64 drop-shadow-[0_0_40px_rgba(196,181,223,0.25)]', tone]}
-        />
-      </div>
-    </div>
-  </section>
+      <ProductMotif product={product} class="product-motif" />
+    </section>
 
-  <section class="container-site grid gap-14 py-10 lg:grid-cols-[1fr_18rem] lg:gap-20">
-    <div>
-      <p class="max-w-prose text-lg text-fg-2" set:html={inlineCode(product.description[lang])} />
-      <h2 class="label-mono mt-16">{tr('product.features')}</h2>
-      <ol class="mt-4">
-        {product.features[lang].map((feature, i) => (
-          <li class="grid grid-cols-[2.5rem_1fr] gap-4 border-t border-line py-5 text-fg-2 last:border-b">
-            <span class="label-mono pt-1 text-sage">{String(i + 1).padStart(2, '0')}</span>
-            <span set:html={inlineCode(feature)} />
+    <section class="container-site grid gap-16 pt-10 pb-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-24">
+      <div>
+        <p
+          class:list={[
+            'max-w-[38em] text-lg leading-[1.95] text-ink-2 sm:text-xl',
+            lang === 'ja' && 'font-mincho',
+          ]}
+          set:html={inlineCode(product.description[lang])}
+        />
+        <h2 class="label-mono mt-20">
+          <span class="text-sage-ink">—</span>&nbsp;{tr('product.features')}
+        </h2>
+        <ol class="features mt-6">
+          {product.features[lang].map((feature, i) => (
+            <li class="feature">
+              <span class="feature-num">{String(i + 1).padStart(2, '0')}</span>
+              <span class="text-ink" set:html={inlineCode(feature)} />
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <aside class="lg:sticky lg:top-24 lg:self-start">
+        <div class="tag-outline">
+          <div class="tag">
+            <span class="tag-hole" aria-hidden="true"></span>
+            <dl>
+              <dt class="label-mono">{tr('product.stack')}</dt>
+              <dd class="mt-3">
+                <ul class="flex flex-wrap gap-1.5">
+                  {product.stack.map((item) => (
+                    <li class="border border-line-strong px-2 py-0.5 font-mono text-xs text-ink">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+              <dt class="label-mono mt-7">{tr('product.license')}</dt>
+              <dd class="mt-2 font-mono text-sm text-ink">{product.license}</dd>
+              <dt class="label-mono mt-7">{tr('product.links')}</dt>
+              <dd class="mt-1">
+                <ul class="flex flex-col">
+                  <li>
+                    <a
+                      href={product.repo}
+                      rel="noopener"
+                      class="inline-flex min-h-9 items-center gap-1.5 text-lav-ink underline-offset-4 hover:underline"
+                    >
+                      GitHub
+                      <ExternalIcon />
+                    </a>
+                  </li>
+                  {product.links.map((link) => (
+                    <li>
+                      <a
+                        href={link.href}
+                        rel="noopener"
+                        class="inline-flex min-h-9 items-center gap-1.5 text-lav-ink underline-offset-4 hover:underline"
+                      >
+                        {link.label[lang]}
+                        <ExternalIcon />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="container-site pt-24" aria-labelledby="product-others">
+      <h2 id="product-others" class="label-mono">
+        <span class="text-sage-ink">—</span>&nbsp;{tr('product.others')}
+      </h2>
+      <ul class="mt-6 grid gap-4 md:grid-cols-3">
+        {others.map((p) => (
+          <li>
+            <ProductCard product={p} lang={lang} />
           </li>
         ))}
-      </ol>
-    </div>
-
-    <aside class="lg:sticky lg:top-24 lg:self-start">
-      <dl class="rounded-2xl border border-line bg-bg-2 p-6">
-        <dt class="label-mono">{tr('product.stack')}</dt>
-        <dd class="mt-3">
-          <ul class="flex flex-wrap gap-1.5">
-            {product.stack.map((item) => (
-              <li class="rounded-full border border-line px-2.5 py-0.5 font-mono text-xs text-fg-2">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </dd>
-        <dt class="label-mono mt-7">{tr('product.license')}</dt>
-        <dd class="mt-2 font-mono text-sm text-fg">{product.license}</dd>
-        <dt class="label-mono mt-7">{tr('product.links')}</dt>
-        <dd class="mt-2">
-          <ul class="flex flex-col gap-2 text-sm">
-            <li>
-              <a
-                href={product.repo}
-                rel="noopener"
-                class="inline-flex items-center gap-1.5 text-lav-2 hover:underline"
-              >
-                GitHub
-                <ExternalIcon />
-              </a>
-            </li>
-            {product.links.map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  rel="noopener"
-                  class="inline-flex items-center gap-1.5 text-lav-2 hover:underline"
-                >
-                  {link.label[lang]}
-                  <ExternalIcon />
-                </a>
-              </li>
-            ))}
-          </ul>
-        </dd>
-      </dl>
-    </aside>
-  </section>
-
-  <section class="container-site pt-16" aria-labelledby="product-others">
-    <h2 id="product-others" class="label-mono">
-      {tr('product.others')}
-    </h2>
-    <ul class="mt-6 grid gap-4 sm:grid-cols-3">
-      {others.map((p) => (
-        <li>
-          <ProductCard product={p} lang={lang} />
-        </li>
-      ))}
-    </ul>
-  </section>
+      </ul>
+    </section>
+  </div>
 </BaseLayout>
+
+<style>
+  .product-page {
+    position: relative;
+  }
+  /* このプロダクトの糸。ページの左端を上から下へ通る */
+  .product-spine {
+    position: absolute;
+    top: 0;
+    bottom: -8rem;
+    left: calc(var(--gutter) * 0.5 - 2px);
+    width: 4px;
+  }
+  .product-hero {
+    display: grid;
+    gap: 2rem;
+    padding-top: 2.5rem;
+    padding-bottom: 3rem;
+  }
+  .product-title {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .product-title-brand {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--koyori-ink-2);
+  }
+  .product-title-name {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(5.5rem, 26vw, 15rem);
+    line-height: 0.82;
+    letter-spacing: -0.05em;
+    margin-left: -0.04em;
+    padding-bottom: 0.06em;
+    color: var(--koyori-ink);
+  }
+  .product-tagline {
+    margin-top: 1.75rem;
+    max-width: 22em;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    line-height: 1.45;
+    color: var(--koyori-ink);
+  }
+  :global(.product-motif) {
+    height: 17rem;
+    margin-inline: calc(var(--gutter) * -0.5);
+    border-top: 1px solid var(--koyori-line-strong);
+    border-bottom: 1px solid var(--koyori-line-strong);
+  }
+
+  .features {
+    counter-reset: feature;
+  }
+  .feature {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    gap: 1rem;
+    padding-block: 1.15rem;
+    border-top: 1px solid var(--koyori-line-strong);
+    line-height: 1.75;
+  }
+  .feature:last-child {
+    border-bottom: 1px solid var(--koyori-line-strong);
+  }
+  .feature-num {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.35rem;
+    line-height: 1.3;
+    color: var(--koyori-lav-ink);
+  }
+
+  /* 荷札（hang tag） */
+  .tag {
+    position: relative;
+    padding: 2.75rem 1.5rem 1.75rem;
+    background-color: var(--koyori-paper-3);
+    clip-path: polygon(1.6rem 0, calc(100% - 1.6rem) 0, 100% 1.6rem, 100% 100%, 0 100%, 0 1.6rem);
+  }
+  /* clip-path の外側に輪郭線を引くため、外側の要素に影を重ねる */
+  .tag-outline {
+    filter: drop-shadow(1px 0 0 rgba(24, 22, 29, 0.32)) drop-shadow(-1px 0 0 rgba(24, 22, 29, 0.32))
+      drop-shadow(0 1px 0 rgba(24, 22, 29, 0.32)) drop-shadow(0 -1px 0 rgba(24, 22, 29, 0.32));
+  }
+  .tag-hole {
+    position: absolute;
+    left: 50%;
+    top: 1rem;
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
+    border-radius: 50%;
+    background-color: var(--koyori-paper);
+    box-shadow:
+      inset 0 1px 2px rgba(24, 22, 29, 0.45),
+      0 0 0 3px var(--strand);
+  }
+
+  @media (width >= 64rem) {
+    .product-hero {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      align-items: stretch;
+      min-height: calc(100svh - 4rem - 4rem);
+      padding-top: 3rem;
+    }
+    .product-hero-text {
+      align-self: center;
+    }
+    :global(.product-motif) {
+      height: auto;
+      min-height: 30rem;
+      margin-inline: 0;
+      border: 0;
+      border-left: 1px solid var(--koyori-line-strong);
+    }
+    .product-title-name {
+      font-size: clamp(7rem, 14vw, 15rem);
+    }
+  }
+</style>

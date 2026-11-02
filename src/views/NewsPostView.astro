@@ -29,39 +29,64 @@ for (const other of translations) {
   alternates={alternates}
   ogType="article"
 >
-  <article class="container-site pt-20 pb-12 sm:pt-28">
-    <div class="mx-auto max-w-3xl">
-      <a href={localePath(lang, '/news/')} class="label-mono transition-colors hover:text-fg">
-        ← {tr('news.back')}
-      </a>
-      <header class="mt-8">
-        <time datetime={isoDate(entry.data.date)} class="label-mono">
-          {formatDate(entry.data.date, lang)}
-        </time>
-        <h1
-          class:list={[
-            'mt-4 text-4xl text-fg sm:text-5xl',
-            lang === 'ja' ? 'display-ja' : 'display',
-          ]}
-        >
-          {entry.data.title}
-        </h1>
-        {translations.map((other) => (
-          <p class="mt-5">
+  <article class="container-site pt-12 pb-12 sm:pt-20">
+    <a
+      href={localePath(lang, '/news/')}
+      class="label-mono inline-flex min-h-10 items-center gap-2 hover:text-ink hover:underline"
+    >
+      <span aria-hidden="true">←</span>
+      {tr('news.back')}
+    </a>
+    <div class="mt-10 grid gap-10 lg:grid-cols-[13rem_minmax(0,46rem)] lg:gap-16">
+      <aside class="lg:pt-3">
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-3 lg:flex-col lg:items-start">
+          <time datetime={isoDate(entry.data.date)} class="label-mono text-ink">
+            {formatDate(entry.data.date, lang)}
+          </time>
+          {translations.map((other) => (
             <a
               href={alternates[other.data.lang]}
               hreflang={other.data.lang}
               lang={other.data.lang}
-              class="label-mono text-lav-2 underline underline-offset-4"
+              class="label-mono inline-flex min-h-9 items-center text-lav-ink underline underline-offset-4"
             >
               {tr('news.alt')}
             </a>
+          ))}
+        </div>
+        <span class="post-thread thread mt-6 hidden lg:block" aria-hidden="true"></span>
+      </aside>
+      <div>
+        <header>
+          <h1
+            class:list={[
+              'text-[clamp(2.2rem,5.5vw,4rem)] text-ink',
+              lang === 'ja' ? 'display-ja' : 'display',
+            ]}
+          >
+            {entry.data.title}
+          </h1>
+          <p
+            class:list={[
+              'mt-6 text-lg text-ink-2 sm:text-xl',
+              lang === 'ja' ? 'font-mincho' : 'font-serif',
+            ]}
+          >
+            {entry.data.description}
           </p>
-        ))}
-      </header>
-      <div class="prose mt-12 border-t border-line pt-10 text-fg-2">
-        <Content />
+        </header>
+        <div class="prose mt-12 border-t border-ink pt-10 text-ink-2">
+          <Content />
+        </div>
       </div>
     </div>
   </article>
 </BaseLayout>
+
+<style>
+  .post-thread {
+    --strand: var(--koyori-lav);
+    width: 3px;
+    height: 12rem;
+  }
+</style>

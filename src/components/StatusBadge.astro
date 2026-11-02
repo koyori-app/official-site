@@ -6,19 +6,39 @@ import type { ProductStatus } from '../data/products';
 interface Props {
   status: ProductStatus;
   lang: Locale;
+  /** inherit は周りの文字色をそのまま使う（色つきの短冊の上など） */
+  tone?: 'default' | 'inherit';
   class?: string;
 }
-const { status, lang, class: className = '' } = Astro.props;
+const { status, lang, tone = 'default', class: className = '' } = Astro.props;
 const tr = t(lang);
-const dot: Record<ProductStatus, string> = {
-  development: 'bg-lav',
-  available: 'bg-sage',
-  alpha: 'bg-fg-3',
-};
 ---
 
-<span class:list={['label-mono inline-flex items-center gap-2 whitespace-nowrap', className]}>
-  <span class:list={['h-1.5 w-1.5 rounded-full', dot[status]]} aria-hidden="true"></span>
+<span
+  class:list={[
+    'status inline-flex items-center gap-2 whitespace-nowrap font-mono text-xs tracking-[0.1em] uppercase',
+    tone === 'default' && 'text-ink-3',
+    className,
+  ]}
+  data-status={status}
+>
+  <span class="status-mark" aria-hidden="true"></span>
   <span class="sr-only">{tr('product.status')}: </span>
   {tr(`product.status.${status}`)}
 </span>
+
+<style>
+  /* 状態は色ではなく形で見分ける: 公開中 = 塗り、開発中 = 輪、アルファ = 半分 */
+  .status-mark {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+  }
+  [data-status='available'] .status-mark {
+    background-color: currentColor;
+  }
+  [data-status='alpha'] .status-mark {
+    background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+  }
+</style>
